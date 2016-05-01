@@ -26,7 +26,7 @@
 				</span>
 			</header>
 			<section id="content">
-				<form id="login_form">
+				<form id="login_form" action="{{ route('register') }}" method="post">
 					<h2>Registracija</h2>
 					<h4>Unesite Vaše podatke i e-mail adresu na kojoj ćе Vam stići potvrda о registraciji.</h4>
 					<div class="form-group">
@@ -50,39 +50,57 @@
 					<div class="form-group">
 					    <label for="title" class="col-md-2 control-label">Zvanje:</label>
 					    <div class="col-md-10">
-						    <select id="title" class="form-control">
-						    	<option>Odaberite zvanje:</option>
-				          		<option>Redovni profesor</option>
-				          		<option>Vanredni profesor</option>
-				          		<option>Docent</option>
-				          		<option>Asistent</option>
-				          		<option>Saradnik u nastavi</option>
-				          		<option>Gostujući profesor</option>
+						    <select id="title" name="title" class="form-control">
+						    	<option value="">Odaberite zvanje:</option>
+				          		<option value="1">Redovni profesor</option>
+				          		<option value="2">Vanredni profesor</option>
+				          		<option value="3">Docent</option>
+				          		<option value="4">Asistent</option>
+				          		<option value="5">Saradnik u nastavi</option>
+				          		<option value="6">Gostujući profesor</option>
 				        	</select>
 				        </div>
 					</div>
 					<div class="form-group">
-					    <label for="title" class="col-md-2 control-label">Katedra:</label>
+					    <label for="department" class="col-md-2 control-label">Katedra:</label>
 					   	<div class="col-md-10">
-						    <select id="title" class="form-control">
-						    	<option>Оdaberite katedru:</option>
-				          		<option>Katedra za elektroniku</option>
-				          		<option>Katedra za elektroenergetske sisteme</option>
-				          		<option>Katedra za energetske pretvarače i pogone</option>
-				          		<option>Katedra za mikroelektroniku i tehničku fiziku</option>
-				          		<option>Katedra za opštu elektrotehniku</option>
-				          		<option>Katedra za opšte obrazovanje</option>
-				          		<option>Katedra za primenjenu matematiku</option>
-				          		<option>Katedra za računarsku tehniku i informatiku</option>
-				          		<option>Katedra za signale i sisteme</option>
-				          		<option>Katedra za telekomunikacije</option>
+						    <select id="department" name="department" class="form-control">
+						    	<option value="">Оdaberite katedru:</option>
+				          		<option value="1">Katedra za elektroniku</option>
+				          		<option value="2">Katedra za elektroenergetske sisteme</option>
+				          		<option value="3">Katedra za energetske pretvarače i pogone</option>
+				          		<option value="4">Katedra za mikroelektroniku i tehničku fiziku</option>
+				          		<option value="5">Katedra za opštu elektrotehniku</option>
+				          		<option value="6">Katedra za opšte obrazovanje</option>
+				          		<option value="7">Katedra za primenjenu matematiku</option>
+				          		<option value="8">Katedra za računarsku tehniku i informatiku</option>
+				          		<option value="9">Katedra za signale i sisteme</option>
+				          		<option value="10">Katedra za telekomunikacije</option>
 				        	</select>
 				        </div>
 					</div>
+
+					<div class="center">
+						@if(count($errors) > 0)
+							@foreach($errors->all() as $error)
+							<p class="text-danger">
+								{{ $error }}
+							</p>
+							@endforeach
+						@endif
+
+						@if(Session::has('success'))
+							<p class="text-success">
+								{{ Session::get('success') }}
+							</p>
+						@endif
+					</div>
+
 					<div class="center">
 						<button type="submit" class="btn btn-raised btn-danger btn-lg" name="submit">
 							Registrujte se
 						</button>
+						<input type="hidden" name="_token" value="{{ Session::token() }}" />
 						<a href="{{ route('login') }}" class="btn btn-raised btn-default btn-lg">
 							Odustanite	
 						</a>

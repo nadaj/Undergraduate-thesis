@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => diplomski_rad\User::class,
+            'model' => App\User::class,
         ],
 
         // 'users' => [

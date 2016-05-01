@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Providers;
+namespace App\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'diplomski_rad\Events\SomeEvent' => [
-            'diplomski_rad\Listeners\EventListener',
+        'App\Events\RegisterEvent' => [
+            'App\Listeners\SendRegisterNotification',
         ],
     ];
 

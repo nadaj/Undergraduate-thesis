@@ -1,8 +1,11 @@
 <?php
 
-namespace diplomski_rad\Http\Controllers;
+namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
+use DB;
+use App\Events\RegisterEvent;
+use Event;
 
 class UserController extends Controller {
 
@@ -36,4 +39,30 @@ class UserController extends Controller {
 	{
 		return view('register');
 	}
+
+	public function postRegister(Request $request)
+	{
+		// Validation of the request
+		$this->validate($request, [
+			'email' => 'required|email|unique:users,email|unique:temp_users,email|max:255',
+			'fname' => 'required|max:50|alpha',
+			'lname' => 'required|max:50|alpha',
+			'title' => 'required',
+			'department' => 'required'
+		]);
+
+		// Insert into temp_users table
+        DB::table('temp_users')->insert([
+        	'firstname' => $request['fname'], 
+		    'lastname' => $request['lname'], 
+		    'email' => $request['email'], 
+		    'department_id' => intval($request['department']), 
+		    'title_id' => intval($request['title']), 
+		]);
+
+        Event::fire(new RegisterEvent($request['email'], $request['fname']." ".$request['lname']));
+
+		return redirect()->back()->with(['success' => 'Uspešno su uneti podaci za registraciju! 
+		Primićete poruku na Vašoj e-mail adresi.']);
+	}	
 }

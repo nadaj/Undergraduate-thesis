@@ -13,7 +13,7 @@ class CreateTitlesTable extends Migration
     public function up()
     {
         Schema::create('titles', function (Blueprint $table) {
-            $table->increments('title_id');
+            $table->increments('id');
             $table->string('name', 20);
         });
     }

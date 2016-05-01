@@ -51,16 +51,24 @@ Route::get('/logout', [
 
 Route::get('/admin/home', [
     'uses' => 'AdminController@getAdminHome',
-    'middleware' => 'isAdmin',
+    'middleware' => 'roles',
+    'roles' => '1',
     'as' => 'admin.home'
 ]);
 
-//---------------------
-
 Route::get('/register', [
     'uses' => 'UserController@getRegister',
+    'middleware' => 'guest',
     'as' => 'register'
 ]);
+
+Route::post('/register', [
+    'uses' => 'UserController@postRegister',
+    'middleware' => 'guest',
+    'as' => 'register'
+]);
+
+//---------------------
 
 Route::get('/users_admin', function () {
     return view('admin.users_admin');

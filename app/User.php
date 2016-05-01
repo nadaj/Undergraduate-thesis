@@ -1,28 +1,31 @@
 <?php
 
-namespace diplomski_rad;
+namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    protected $primaryKey = 'user_id';
-    
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'firstname', 'lastname', 'email', 'password', 'is_admin', 'is_initiator', 'active'
-    ];
+    public function department()
+    {
+    	return $this->belongsTo('App\Department');
+    }
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    public function title()
+    {
+    	return $this->belongsTo('App\Title');
+    }
+
+    public function role()
+    {
+    	return $this->belongsTo('App\Role');
+    }
+
+    public function hasRole($role)
+    {
+        if ($this->role_id === intval($role)) {
+            return true;
+        }
+        return false;
+    }
 }

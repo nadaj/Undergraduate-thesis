@@ -77,7 +77,7 @@ return [
     ],
     'string'               => 'The :attribute must be a string.',
     'timezone'             => 'The :attribute must be a valid zone.',
-    'unique'               => 'The :attribute has already been taken.',
+    'unique'               => 'Uneti :attribute već postoji.',
     'url'                  => 'The :attribute format is invalid.',
 
     /*
@@ -94,9 +94,31 @@ return [
     'custom' => [
         'email' => [
             'required' => 'Niste uneli e-mail adresu!',
+            'unique' => 'Već postoji korisnik sa unetom e-mail adresom!',
+            'max' => 'E-mail adresa mora da sadrži najviše 255 karaktera!',
         ],
         'password' => [
             'required' => 'Niste uneli lozinku!',
+            'min' => 'Lozinka mora da sadrži najmanje 8 karatera!',
+            'max' => 'Lozinka mora da sadrži najviše 255 karaktera!',
+        ],
+        'fname' => [
+            'required' => 'Niste uneli ime!',
+            'alpha' => 'Ime mora da sadrži isključivo slova!',
+            'max' => 'Ime mora da sadrži najviše 50 karaktera!',
+        ],
+        'lname' => [
+            'required' => 'Niste uneli prezime!',
+            'alpha' => 'Prezime mora da sadrži isključivo slova!',
+            'max' => 'Prezime mora da sadrži najviše 50 karaktera!',
+        ],
+        'title' => [
+            'required' => 'Niste uneli zvanje!',
+            'different' => 'Niste uneli zvanje!'
+        ],
+        'department' => [
+            'required' => 'Niste uneli katedru!',
+            'different' => 'Niste uneli katedru!',
         ],
     ],
 

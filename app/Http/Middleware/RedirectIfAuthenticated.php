@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
@@ -17,9 +17,15 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (!Auth::guest()) {
-            if (Auth::user()->is_admin)
-                return redirect()->route('admin.home'); 
+        if (Auth::guard($guard)->check()) {
+            if ($request->user())
+            {
+                switch($request->user()->role_id)
+                {
+                    case 1: return redirect()->route('admin.home');
+                    
+                }
+            }
         }
 
         return $next($request); 

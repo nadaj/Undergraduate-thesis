@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Providers;
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

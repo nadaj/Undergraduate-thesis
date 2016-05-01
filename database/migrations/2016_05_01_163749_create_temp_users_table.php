@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTempusersTable extends Migration
+class CreateTempUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,18 +12,15 @@ class CreateTempusersTable extends Migration
      */
     public function up()
     {
-        Schema::create('tempusers', function (Blueprint $table) {
-            $table->increments('tempuser_id');
+        Schema::create('temp_users', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('firstname', 50);
             $table->string('lastname', 50);
             $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->boolean('is_initiator');
             $table->integer('department_id')->unsigned()->nullable();
-            $table->foreign('department_id')->references('department_id')->on('departments');
+            $table->foreign('department_id')->references('id')->on('departments');
             $table->integer('title_id')->unsigned()->nullable();
-            $table->foreign('title_id')->references('title_id')->on('titles');
+            $table->foreign('title_id')->references('id')->on('titles');
         });
     }
 
@@ -34,6 +31,6 @@ class CreateTempusersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('tempusers');
+        Schema::drop('temp_users');
     }
 }

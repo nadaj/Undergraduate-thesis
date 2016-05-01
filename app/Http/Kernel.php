@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Http;
+namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -24,11 +24,11 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \diplomski_rad\Http\Middleware\EncryptCookies::class,
+            \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \diplomski_rad\Http\Middleware\VerifyCsrfToken::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
         ],
 
         'api' => [
@@ -44,11 +44,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \diplomski_rad\Http\Middleware\Authenticate::class,
+        'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
-        'guest' => \diplomski_rad\Http\Middleware\RedirectIfAuthenticated::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'isAdmin' => \diplomski_rad\Http\Middleware\AdminMiddleware::class,
+        'roles' => \App\Http\Middleware\CheckRole::class,
     ];
 }

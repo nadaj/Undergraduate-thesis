@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Exceptions;
+namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Validation\ValidationException;

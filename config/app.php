@@ -151,10 +151,10 @@ return [
         /*
          * Application Service Providers...
          */
-        diplomski_rad\Providers\AppServiceProvider::class,
-        diplomski_rad\Providers\AuthServiceProvider::class,
-        diplomski_rad\Providers\EventServiceProvider::class,
-        diplomski_rad\Providers\RouteServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
 
     ],
 

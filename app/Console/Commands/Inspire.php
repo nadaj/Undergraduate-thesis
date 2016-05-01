@@ -1,6 +1,6 @@
 <?php
 
-namespace diplomski_rad\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Inspiring;

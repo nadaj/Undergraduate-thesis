@@ -20,7 +20,7 @@
             "database"
         ],
         "psr-4": {
-            "diplomski_rad\\": "app/"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {

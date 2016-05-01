@@ -1,8 +1,8 @@
 <?php
 
-namespace diplomski_rad\Http\Controllers\Auth;
+namespace App\Http\Controllers\Auth;
 
-use diplomski_rad\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class PasswordController extends Controller
@@ -19,6 +19,8 @@ class PasswordController extends Controller
     */
 
     use ResetsPasswords;
+
+    private $redirectTo = '/login';
 
     /**
      * Create a new password controller instance.
