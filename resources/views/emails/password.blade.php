@@ -1,0 +1,1 @@
+Kliknite na ovaj link kako biste promenili lozinku: {{ url('password/reset/'.$token) }}
