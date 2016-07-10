@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
-use App\Events\RegisterEvent;
-use Event;
+use App\User;
 
 class UserController extends Controller {
 
 	public function getLogin()
 	{
-		return view('login');
+		if (Auth::user() == null)
+			return view('login');
+		if (Auth::user()->role_id == 1)
+			return redirect()->route('admin.home');
+		else if (Auth::user()->role_id == 2)
+			return redirect()->route('initiator.home');
+		else
+			return redirect()->route('voter.home');
 	}
 
 	public function getLogout()
@@ -24,7 +30,7 @@ class UserController extends Controller {
 	{
 		// Validation of the request
 		$this->validate($request, [
-			'email' => 'required',
+			'email' => 'required|email',
 			'password' => 'required'
 		]);
 
@@ -32,7 +38,12 @@ class UserController extends Controller {
 		{
 			return redirect()->back()->with(['fail' => 'Uneti podaci nisu validni!']);
 		}
-		return redirect()->route('admin.home');
+		if (Auth::user()->role_id == 1)
+			return redirect()->route('admin.home');
+		else if (Auth::user()->role_id == 2)
+			return redirect()->route('initiator.home');
+		else
+			return redirect()->route('voter.home');
 	}
 
 	public function getRegister()
@@ -44,25 +55,45 @@ class UserController extends Controller {
 	{
 		// Validation of the request
 		$this->validate($request, [
-			'email' => 'required|email|unique:users,email|unique:temp_users,email|max:255',
+			'email' => 'required|email|unique:users,email|max:255',
 			'fname' => 'required|max:50|alpha',
 			'lname' => 'required|max:50|alpha',
 			'title' => 'required',
 			'department' => 'required'
 		]);
 
-		// Insert into temp_users table
-        DB::table('temp_users')->insert([
+        DB::table('users')->insert([
         	'firstname' => $request['fname'], 
 		    'lastname' => $request['lname'], 
 		    'email' => $request['email'], 
 		    'department_id' => intval($request['department']), 
 		    'title_id' => intval($request['title']), 
+		    'role_id' => 3
 		]);
 
-        Event::fire(new RegisterEvent($request['email'], $request['fname']." ".$request['lname']));
-
 		return redirect()->back()->with(['success' => 'Uspešno su uneti podaci za registraciju! 
-		Primićete poruku na Vašoj e-mail adresi.']);
+		Primićete poruku na Vašoj e-mail adresi o daljoj registraciji.']);
 	}	
+
+	public function verifyRegister($confirmation_code)
+	{
+		if (! $confirmation_code)
+			return redirect()->route('error')->with([
+            'fail' => 'Nije validan zahtev za registraciju!'
+        ]);
+
+        $user = User::where('confirmation_code', '=', $confirmation_code)->get();
+
+        if ($user->isEmpty())
+	        return redirect()->route('error')->with([
+	            'fail' => 'Nije validan zahtev za registraciju!'
+	        ]);
+
+	    User::where('confirmation_code', '=', $confirmation_code)->update([
+            'confirmed' => true,
+            'confirmation_code' => null
+        ]);
+
+	    return redirect()->route('login');
+	}
 }

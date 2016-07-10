@@ -6,7 +6,12 @@
     "type": "project",
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "5.2.*"
+        "laravel/framework": "5.2.*",
+        "swiftmailer/swiftmailer": "^5.4",
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "sendgrid/sendgrid": "~4.0",
+        "nesbot/carbon": "^1.21",
+        "fightbulc/moment": "*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

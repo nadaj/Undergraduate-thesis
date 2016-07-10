@@ -8,6 +8,7 @@ use Countable;
 use Exception;
 use DateTimeZone;
 use RuntimeException;
+use DateTimeInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use BadMethodCallException;
@@ -279,7 +280,11 @@ class Validator implements ValidatorContract
 
         if (call_user_func($callback, $payload)) {
             foreach ((array) $attribute as $key) {
-                $this->mergeRules($key, $rules);
+                if (Str::contains($key, '*')) {
+                    $this->explodeRules([$key => $rules]);
+                } else {
+                    $this->mergeRules($key, $rules);
+                }
             }
         }
     }
@@ -332,7 +337,7 @@ class Validator implements ValidatorContract
             return $data;
         }
 
-        return data_fill($data, $attribute, null);
+        return data_set($data, $attribute, null, true);
     }
 
     /**
@@ -835,6 +840,16 @@ class Validator implements ValidatorContract
 
         $values = array_slice($parameters, 1);
 
+        if (is_bool($data)) {
+            array_walk($values, function (&$value) {
+                if ($value === 'true') {
+                    $value = true;
+                } elseif ($value === 'false') {
+                    $value = false;
+                }
+            });
+        }
+
         if (in_array($data, $values)) {
             return $this->validateRequired($attribute, $value);
         }
@@ -1293,7 +1308,6 @@ class Validator implements ValidatorContract
         $extra = $this->getUniqueExtra($parameters);
 
         return $verifier->getCount(
-
             $table, $column, $value, $id, $idColumn, $extra
 
         ) == 0;
@@ -1487,7 +1501,7 @@ class Validator implements ValidatorContract
                 \]  # a IPv6 address
             )
             (:[0-9]+)?                              # a port (optional)
-            (/?|/\S+)                               # a /, nothing or a / with something
+            (/?|/\S+|\?\S*|\#\S*)                   # a /, nothing, a / with something, a query or a fragment
         $~ixu';
 
         return preg_match($pattern, $value) === 1;
@@ -1514,6 +1528,18 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Validate the given value is a valid file.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @return bool
+     */
+    protected function validateFile($attribute, $value)
+    {
+        return $this->isAValidFileInstance($value);
+    }
+
+    /**
      * Validate the MIME type of a file is an image MIME type.
      *
      * @param  string  $attribute
@@ -1523,6 +1549,46 @@ class Validator implements ValidatorContract
     protected function validateImage($attribute, $value)
     {
         return $this->validateMimes($attribute, $value, ['jpeg', 'png', 'gif', 'bmp', 'svg']);
+    }
+
+    /**
+     * Validate the dimensions of an image matches the given values.
+     *
+     * @param  string $attribute
+     * @param  mixed $value
+     * @param  array $parameters
+     * @return bool
+     */
+    protected function validateDimensions($attribute, $value, $parameters)
+    {
+        if (! $sizeDetails = getimagesize($value->getRealPath())) {
+            return false;
+        }
+
+        $this->requireParameterCount(1, $parameters, 'dimensions');
+
+        list($width, $height) = $sizeDetails;
+
+        $parameters = $this->parseNamedParameters($parameters);
+
+        if (
+            isset($parameters['width']) && $parameters['width'] != $width ||
+            isset($parameters['min_width']) && $parameters['min_width'] > $width ||
+            isset($parameters['max_width']) && $parameters['max_width'] < $width ||
+            isset($parameters['height']) && $parameters['height'] != $height ||
+            isset($parameters['min_height']) && $parameters['min_height'] > $height ||
+            isset($parameters['max_height']) && $parameters['max_height'] < $height
+        ) {
+            return false;
+        }
+
+        if (isset($parameters['ratio'])) {
+            list($numerator, $denominator) = array_pad(sscanf($parameters['ratio'], '%d/%d'), 2, 1);
+
+            return $numerator / $denominator == $width / $height;
+        }
+
+        return true;
     }
 
     /**
@@ -1692,7 +1758,7 @@ class Validator implements ValidatorContract
     {
         $this->requireParameterCount(1, $parameters, 'before');
 
-        if (! is_string($value) && ! is_numeric($value)) {
+        if (! is_string($value) && ! is_numeric($value) && ! $value instanceof DateTimeInterface) {
             return false;
         }
 
@@ -1700,11 +1766,11 @@ class Validator implements ValidatorContract
             return $this->validateBeforeWithFormat($format, $value, $parameters);
         }
 
-        if (! ($date = strtotime($parameters[0]))) {
-            return strtotime($value) < strtotime($this->getValue($parameters[0]));
+        if (! $date = $this->getDateTimestamp($parameters[0])) {
+            $date = $this->getDateTimestamp($this->getValue($parameters[0]));
         }
 
-        return strtotime($value) < $date;
+        return $this->getDateTimestamp($value) < $date;
     }
 
     /**
@@ -1734,7 +1800,7 @@ class Validator implements ValidatorContract
     {
         $this->requireParameterCount(1, $parameters, 'after');
 
-        if (! is_string($value) && ! is_numeric($value)) {
+        if (! is_string($value) && ! is_numeric($value) && ! $value instanceof DateTimeInterface) {
             return false;
         }
 
@@ -1742,11 +1808,11 @@ class Validator implements ValidatorContract
             return $this->validateAfterWithFormat($format, $value, $parameters);
         }
 
-        if (! ($date = strtotime($parameters[0]))) {
-            return strtotime($value) > strtotime($this->getValue($parameters[0]));
+        if (! $date = $this->getDateTimestamp($parameters[0])) {
+            $date = $this->getDateTimestamp($this->getValue($parameters[0]));
         }
 
-        return strtotime($value) > $date;
+        return $this->getDateTimestamp($value) > $date;
     }
 
     /**
@@ -1832,6 +1898,17 @@ class Validator implements ValidatorContract
         if ($result = $this->getRule($attribute, 'DateFormat')) {
             return $result[1][0];
         }
+    }
+
+    /**
+     * Get the date timestamp.
+     *
+     * @param  mixed  $value
+     * @return int
+     */
+    protected function getDateTimestamp($value)
+    {
+        return $value instanceof DateTimeInterface ? $value->getTimestamp() : strtotime($value);
     }
 
     /**
@@ -2547,6 +2624,23 @@ class Validator implements ValidatorContract
     }
 
     /**
+     * Parse named parameters to $key => $value items.
+     *
+     * @param  array  $parameters
+     * @return array
+     */
+    protected function parseNamedParameters($parameters)
+    {
+        return array_reduce($parameters, function ($result, $item) {
+            list($key, $value) = array_pad(explode('=', $item, 2), 2, null);
+
+            $result[$key] = $value;
+
+            return $result;
+        });
+    }
+
+    /**
      * Normalizes a rule so that we can accept short types.
      *
      * @param  string  $rule
@@ -3088,7 +3182,11 @@ class Validator implements ValidatorContract
      */
     protected function callClassBasedExtension($callback, $parameters)
     {
-        list($class, $method) = explode('@', $callback);
+        if (Str::contains($callback, '@')) {
+            list($class, $method) = explode('@', $callback);
+        } else {
+            list($class, $method) = [$callback, 'validate'];
+        }
 
         return call_user_func_array([$this->container->make($class), $method], $parameters);
     }

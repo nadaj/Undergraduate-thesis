@@ -30,12 +30,12 @@
 					<h2>е-Glasanje</h2>
 					<div class="form-group label-floating">
 					    <label for="email" class="control-label">Е-mail аdresa:</label>
-					    <input type="text" class="form-control" id="email" name="email" >
+					    <input type="text" class="form-control" id="email" name="email" value="{{ old('email') }}" />
 					</div>
 				
 					<div class="form-group label-floating">
 					    <label for="password" class="control-label">Lozinka:</label>
-					    <input type="password" class="form-control" id="password" name="password" >
+					    <input type="password" class="form-control" id="password" name="password" />
 					</div>
 					
 					<div class="center">

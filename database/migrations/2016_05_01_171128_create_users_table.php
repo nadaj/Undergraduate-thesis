@@ -20,6 +20,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->remembertoken();
             $table->boolean('active')->default(true);
+            $table->boolean('confirmed')->default(false);
+            $table->string('confirmation_code')->nullable();
             $table->integer('role_id')->unsigned();
             $table->foreign('role_id')->references('id')->on('roles');
             $table->integer('department_id')->unsigned()->nullable();

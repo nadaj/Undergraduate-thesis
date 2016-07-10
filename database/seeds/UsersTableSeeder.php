@@ -28,6 +28,7 @@ class UsersTableSeeder extends Seeder
         $admin->email = 'jankovicna@gmail.com';
         $admin->password = bcrypt('admin1');
         $admin->created_at = date("Y-m-d H:i:s");
+        $admin->confirmed = true;
         $admin->role_id = $role_admin->id;
         $admin->save();
         
@@ -35,22 +36,24 @@ class UsersTableSeeder extends Seeder
         $voter->firstname = 'Nada';
         $voter->lastname = 'Janković';
         $voter->email = 'nadajankovic2004@gmail.com';
-        $voter->password = bcrypt('perapetrovic');
+        $voter->password = bcrypt('voter1');
         $voter->created_at = date("Y-m-d H:i:s");
         $voter->department_id = $department_rti->id;
         $voter->title_id = $title_asistent->id;
         $voter->role_id = $role_voter->id;
+        $voter->confirmed = true;
         $voter->save();
         
         $initiator = new App\User();
         $initiator->firstname = 'Nada';
         $initiator->lastname = 'Janković';
         $initiator->email = 'nadajankovic2004@yahoo.com';
-        $initiator->password = bcrypt('admin');
+        $initiator->password = bcrypt('initi1');
         $initiator->created_at = date("Y-m-d H:i:s");
         $initiator->department_id = $department_rti->id;
         $initiator->title_id = $title_prof->id;
         $initiator->role_id = $role_initiator->id;
+        $initiator->confirmed = true;
         $initiator->save();
         
     }

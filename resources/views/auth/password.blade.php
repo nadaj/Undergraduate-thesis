@@ -31,7 +31,7 @@
 					<h4>Unesitе e-mail adresu sа kojom ste sе registrovali kako biste izmenili lozinku.</h4>
 					<div class="form-group label-floating">
 					    <label for="email" class="control-label">Е-mail adresa:</label>
-					    <input type="text" class="form-control" id="email" name="email" />
+					    <input type="text" class="form-control" id="email" name="email" value="{{old('email')}}" />
 					</div>
 					
 					<div class="center">
@@ -47,6 +47,12 @@
 							<p class="text-danger">
 								{{ Session::get('fail') }}
 							</p>
+						@endif
+						@if(Session::has('success'))
+							<div class="alert alert-dismissible alert-success">
+								<button type="button" class="close" data-dismiss="alert">×</button>
+								{{ Session::get('success') }}
+							</div>
 						@endif
 					</div>
 

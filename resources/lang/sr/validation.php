@@ -101,6 +101,7 @@ return [
             'required' => 'Niste uneli lozinku!',
             'min' => 'Lozinka mora da sadrži najmanje 8 karatera!',
             'max' => 'Lozinka mora da sadrži najviše 255 karaktera!',
+            'confirmed' => 'Ne poklapaju se lozinka i potvrda lozinke!',
         ],
         'fname' => [
             'required' => 'Niste uneli ime!',
@@ -119,6 +120,41 @@ return [
         'department' => [
             'required' => 'Niste uneli katedru!',
             'different' => 'Niste uneli katedru!',
+        ],
+        'token' => [
+            'required' => 'Nije dostavljen token!'
+        ],
+        'naslov' => [
+            'required' => 'Niste uneli naslov!',
+            'max' => 'Naslov mora da sadrži najviše 100 karaktera!',
+            'unique' => 'Već postoji glasanje sa unetim imenom!',
+        ],
+        'opis' => [
+            'required' => 'Niste uneli opis!',
+            'max' => 'Opis mora da sadrži najviše 65535 karaktera!',
+        ],
+        'vreme1' => [
+            'required' => 'Niste uneli vreme početka!',
+            'after' => 'Vreme početka nije validno!',
+        ],
+        'vreme2' => [
+            'required' => 'Niste uneli vreme završetka!',
+            'after' => 'Vreme završetka nije posle vremena početka!',
+        ],
+        'odgovori' => [
+            'required' => 'Niste uneli odgovore!',
+            'min' => 'Potrebno je uneti bar 2 odgovora!',
+        ],
+        'glasaci' => [
+            'required' => 'Niste uneli glasače!',
+            'min' => 'Potrebno je uneti bar 1 glasača!',
+        ],
+        'ticket' => [
+            'required' => 'Niste uneli tiket!',
+            'exists' => 'Uneti tiket nije validan!',
+        ],
+        'optionsRadios' => [
+            'required' => 'Niste uneli odgovor!',
         ],
     ],
 

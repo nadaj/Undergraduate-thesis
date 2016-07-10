@@ -15,10 +15,9 @@
 		<link rel="stylesheet" type="text/css" href="../../bower_components/bootstrap-material-design/dist/css/bootstrap-material-design.css">
 		<link rel="stylesheet" type="text/css" href="../../bower_components/bootstrap-material-design/dist/css/ripples.min.css">
 
-		<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	</head>
-	<body>
+	<body style="background-color:#ffffff">
 		@include('includes.header_admin')
 
 		<div class="main">
@@ -32,10 +31,16 @@
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script src="../../bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
 		<script src="../../bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
+		<script type="text/javascript" src="../../js/main.js"></script>
+		<script src="../../node_modules/moment/moment.js"></script>
+		<script src="../../node_modules/moment/locale/*.js"></script>
+		<script src="../../node_modules/moment/min/moment-with-locales.js"></script>
 		<script>
 		  $(function () {
 		    $.material.init();
 		  });
+
+		  moment().format();
 		</script>
 	</body>
 </html>

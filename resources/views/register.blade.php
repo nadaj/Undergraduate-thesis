@@ -29,55 +29,45 @@
 				<form id="login_form" action="{{ route('register') }}" method="post">
 					<h2>Registracija</h2>
 					<h4>Unesite Vaše podatke i e-mail adresu na kojoj ćе Vam stići potvrda о registraciji.</h4>
-					<div class="form-group">
-					    <label for="email" class="col-md-2 control-label">Е-mail adresa:</label>
-					    <div class="col-md-10">
-					    	<input type="text" class="form-control" id="email" name="email" >
-						</div>
+					<div class="form-group label-floating">
+					    <label for="email" class="control-label">Е-mail adresa:</label>
+						<input type="text" class="form-control" id="email" name="email" >
 					</div>
-					<div class="form-group">
-					    <label for="fname" class="col-md-2 control-label">Ime:</label>
-					    <div class="col-md-10">
-					    	<input type="text" class="form-control" id="fname" name="fname" >
-						</div>
+					<div class="form-group label-floating">
+					    <label for="fname" class="control-label">Ime:</label>
+					    <input type="text" class="form-control" id="fname" name="fname" >
 					</div>
-					<div class="form-group">
-					    <label for="lname" class="col-md-2 control-label">Prezime:</label>
-					    <div class="col-md-10">
-					    	<input type="text" class="form-control" id="lname" name="lname" >
-						</div>
+					<div class="form-group label-floating">
+					    <label for="lname" class="control-label">Prezime:</label>
+					    <input type="text" class="form-control" id="lname" name="lname" >
 					</div>
-					<div class="form-group">
-					    <label for="title" class="col-md-2 control-label">Zvanje:</label>
-					    <div class="col-md-10">
-						    <select id="title" name="title" class="form-control">
-						    	<option value="">Odaberite zvanje:</option>
-				          		<option value="1">Redovni profesor</option>
-				          		<option value="2">Vanredni profesor</option>
-				          		<option value="3">Docent</option>
-				          		<option value="4">Asistent</option>
-				          		<option value="5">Saradnik u nastavi</option>
-				          		<option value="6">Gostujući profesor</option>
-				        	</select>
-				        </div>
+					<div class="form-group label-floating">
+					    <label for="title" class="control-label">Zvanje:</label>
+						<select id="title" name="title" class="form-control">
+					    	<option value=""></option>
+			          		<option value="1">Redovni profesor</option>
+			          		<option value="2">Vanredni profesor</option>
+			          		<option value="3">Docent</option>
+			          		<option value="4">Asistent</option>
+			          		<option value="5">Saradnik u nastavi</option>
+			          		<option value="6">Gostujući profesor</option>
+			        	</select>
 					</div>
-					<div class="form-group">
-					    <label for="department" class="col-md-2 control-label">Katedra:</label>
-					   	<div class="col-md-10">
-						    <select id="department" name="department" class="form-control">
-						    	<option value="">Оdaberite katedru:</option>
-				          		<option value="1">Katedra za elektroniku</option>
-				          		<option value="2">Katedra za elektroenergetske sisteme</option>
-				          		<option value="3">Katedra za energetske pretvarače i pogone</option>
-				          		<option value="4">Katedra za mikroelektroniku i tehničku fiziku</option>
-				          		<option value="5">Katedra za opštu elektrotehniku</option>
-				          		<option value="6">Katedra za opšte obrazovanje</option>
-				          		<option value="7">Katedra za primenjenu matematiku</option>
-				          		<option value="8">Katedra za računarsku tehniku i informatiku</option>
-				          		<option value="9">Katedra za signale i sisteme</option>
-				          		<option value="10">Katedra za telekomunikacije</option>
-				        	</select>
-				        </div>
+					<div class="form-group label-floating">
+					    <label for="department" class="control-label">Katedra:</label>
+					    <select id="department" name="department" class="form-control">
+					    	<option value=""></option>
+			          		<option value="1">Katedra za elektroniku</option>
+			          		<option value="2">Katedra za elektroenergetske sisteme</option>
+			          		<option value="3">Katedra za energetske pretvarače i pogone</option>
+			          		<option value="4">Katedra za mikroelektroniku i tehničku fiziku</option>
+			          		<option value="5">Katedra za opštu elektrotehniku</option>
+			          		<option value="6">Katedra za opšte obrazovanje</option>
+			          		<option value="7">Katedra za primenjenu matematiku</option>
+			          		<option value="8">Katedra za računarsku tehniku i informatiku</option>
+			          		<option value="9">Katedra za signale i sisteme</option>
+			          		<option value="10">Katedra za telekomunikacije</option>
+			        	</select>
 					</div>
 
 					<div class="center">
@@ -90,9 +80,10 @@
 						@endif
 
 						@if(Session::has('success'))
-							<p class="text-success">
+							<div class="alert alert-dismissible alert-success">
+								<button type="button" class="close" data-dismiss="alert">×</button>
 								{{ Session::get('success') }}
-							</p>
+							</div>
 						@endif
 					</div>
 
