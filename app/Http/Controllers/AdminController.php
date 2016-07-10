@@ -54,6 +54,11 @@ class AdminController extends Controller
 			return redirect()->back()->with(['fail' => 'Ne poklapa se stara lozinka sa lozinkom vezanom za nalog.']);
 		}
 
+		if ($request['old_password'] === $request['password'])
+		{
+			return redirect()->back()->with(['fail' => 'Nova lozinka je ista kao stara.']);
+		}
+
 		User::where('email', '=', $user->email)->update([
 			'password' => bcrypt($request['password'])
 		]);
@@ -63,8 +68,10 @@ class AdminController extends Controller
 
 	public function getUsers()
 	{
-		$users = User::where('confirmed', '=', true)->simplePaginate(20, ['*'], 'page_current');;
-		$nousers = User::where('confirmed', '=', false)->simplePaginate(20, ['*'], 'page_no');;
+		$users = User::where('confirmed', '=', true)
+					->where('id', '!=', Auth::user()->id)
+					->get();
+		$nousers = User::where('confirmed', '=', false)->get();
 
 		return view('admin.users', compact('users', 'nousers'));
 	}

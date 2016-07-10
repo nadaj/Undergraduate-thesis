@@ -26,24 +26,5 @@
   		</div>
 	</div>
 	@endforeach
-	<!-- <div class="panel panel-default">
-  		<div class="panel-heading">GLASANJE 4</div>
-  		<div class="panel-body">
-  		    <div class="bs-component">
-          		<div class="progress progress-striped active">
-            		<div class="progress-bar" style="width: 95%"></div>
-          		</div>
-        	</div>
-  		</div>
-	</div>
-	<div class="panel panel-primary">
-  		<div class="panel-heading">GLASANJE 5</div>
-  		<div class="panel-body">
-  		    <div class="bs-component">
-          		<div class="progress progress-striped active">
-            		<div class="progress-bar" style="width: 50%"></div>
-          		</div>
-        	</div>
-  		</div>
-	</div> -->
+  
 @endsection
