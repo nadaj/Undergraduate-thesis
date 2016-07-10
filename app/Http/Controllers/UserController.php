@@ -38,12 +38,19 @@ class UserController extends Controller {
 		{
 			return redirect()->back()->with(['fail' => 'Uneti podaci nisu validni!']);
 		}
+
 		if (Auth::user()->role_id == 1)
+		{
 			return redirect()->route('admin.home');
+		}
 		else if (Auth::user()->role_id == 2)
+		{
 			return redirect()->route('initiator.home');
+		}
 		else
+		{
 			return redirect()->route('voter.home');
+		}
 	}
 
 	public function getRegister()

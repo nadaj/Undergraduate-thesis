@@ -10,7 +10,7 @@
                 <p onLoad="set_start_date(this)"><b>Vreme završetka:</b> {{ $voting->to }}</p>
                 <br/> 
                 <div class="progress progress-striped active">
-                    <div class="progress-bar" style="width: 10%"></div>
+                    <div class="progress-bar" style="width: {{ $progress }}%"></div>
                 </div>
                 <button data-toggle="modal" data-target="#votingmodal" 
                 class="btn btn-primary btn-lg btn-block btn-raised">Glasaj</button>

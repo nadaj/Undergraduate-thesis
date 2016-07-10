@@ -17,13 +17,29 @@ use DB;
 use SendGrid;
 use Illuminate\Support\Str;
 use Session;
+use Moment\Moment;
 
 class InitiatorController extends Controller
 {
     public function getInitiatorHome()
 	{
-		$votings = Voting::all();
-		return view('initiator.home', compact('votings'));
+		$date_now = Carbon::now();
+		$votings = Voting::where('to', '>=', $date_now)->simplePaginate(5, ['*'], 'page_current');		
+		$temp_current = Voting::where('to', '>=', $date_now)->get();
+
+		// setting progresses for current votings
+		for($i = 0; $i < count($temp_current); $i++)
+		{
+			$start = new \Moment\Moment($temp_current[$i]->from);
+			$duration = $start->from($temp_current[$i]->to);
+			$duration_now = $start->fromNow();
+			$duration_days = $duration->getDays();
+			$duration_now_days = $duration_now->getDays();
+
+			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+		}
+
+		return view('initiator.home', compact('votings', 'progresses'));
 	}
 
 	public function getChangePassword()
@@ -54,8 +70,30 @@ class InitiatorController extends Controller
 
 	public function getVotings()
 	{
-		$my_votings = Voting::where('initiator_id', '=', Auth::user()->id)->get();
-		return view('initiator.votings', compact('my_votings'));
+		$date_now = Carbon::now();
+		$my_votings = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('to', '>=', $date_now)
+							->simplePaginate(5, ['*'], 'page_current');	
+		$my_votings_past = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('to', '<', $date_now)
+							->simplePaginate(5, ['*'], 'page_past');		
+		$temp_current = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('to', '>=', $date_now)
+							->get();
+
+		// setting progresses for current votings
+		for($i = 0; $i < count($temp_current); $i++)
+		{
+			$start = new \Moment\Moment($temp_current[$i]->from);
+			$duration = $start->from($temp_current[$i]->to);
+			$duration_now = $start->fromNow();
+			$duration_days = $duration->getDays();
+			$duration_now_days = $duration_now->getDays();
+
+			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+		}
+
+		return view('initiator.votings', compact('my_votings', 'progresses', 'my_votings_past'));
 	}
 
 	public function getCreateVoting()
@@ -303,7 +341,16 @@ class InitiatorController extends Controller
 	public function getVotingInfo($votings_id)
 	{
 		$voting = Voting::where('id', '=', $votings_id)->firstOrFail();
-		return view('initiator.voting', compact('voting'));
+
+		$start = new \Moment\Moment($voting->from);
+		$duration = $start->from($voting->to);
+		$duration_now = $start->fromNow();
+		$duration_days = $duration->getDays();
+		$duration_now_days = $duration_now->getDays();
+
+		$progress = ($duration_now_days / $duration_days) * 100;
+		
+		return view('initiator.voting', compact('voting', 'progress'));
 	}
 
 	public function getAccessVote(Request $request)

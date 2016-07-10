@@ -2,7 +2,7 @@
 
 @section('content')
 	<form style="margin-left:2%" id="createVoting" action="{{ route('initiator.createvoting') }}" method="post">
-    <h2>Kreiranje novog glasanja</h2>
+    <p class="lead" style="margin-bottom: 0px">KREIRANJE NOVOG GLASANJA</p>
 
     <div class="row">
         <div class='col-md-6'>
