@@ -2,21 +2,21 @@
 
 @section('content')
 	<div class="btn-group btn-group-justified btn-group-raised">
-  		<a href="" class="btn active" id="postojeci">Postojeći korisnici</a>
-  		<a href="" class="btn" id="neodobreni">Neodobreni korisnici</a>
+  		<a class="btn active" id="postojeci">Postojeći</a>
+  		<a class="btn" id="neodobreni">Neodobreni</a>
 	</div>
 	<br/>
 	<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
-	<table class="table table-striped table-hover" id="table1" style="display:table">
+	<table class="footable table table-striped table-hover" id="table1" style="display:table">
   		<thead>
   			<!-- SMISLI DA BUDE HIDDEN KAD SE SMANJI -->
   			<tr>
-			    <th></th>
+			    <th>#</th>
 			    <th>Ime i prezime</th>
-			    <th>Е-mail</th>
-			    <th>Zvanje</th>
-			    <th>Katedra</th>
-			    <th>Uloga</th>
+			    <th data-hide="phone,tablet">Е-mail</th>
+			    <th data-hide="phone,tablet">Zvanje</th>
+			    <th data-hide="phone,tablet">Katedra</th>
+			    <th data-hide="phone,tablet">Uloga</th>
 			</tr>
   		</thead>
   		<tbody>
@@ -87,15 +87,15 @@
 		</tbody>
 	</table>
 	
-	<table class="table table-striped table-hover" style="display:none" id="table2">
+	<table class="footable table table-striped table-hover" style="display:none" id="table2">
   		<thead>
   			<tr>
-			    <th></th>
+			    <th>#</th>
 			    <th>Ime i prezime</th>
-			    <th>Е-mail</th>
-			    <th>Zvanje</th>
-			    <th>Katedra</th>
-			    <th>Uloga</th>
+			    <th data-hide="phone,tablet">Е-mail</th>
+			    <th data-hide="phone,tablet">Zvanje</th>
+			    <th data-hide="phone,tablet">Katedra</th>
+			    <th data-hide="phone,tablet">Uloga</th>
 			</tr>
   		</thead>
   		<tbody>

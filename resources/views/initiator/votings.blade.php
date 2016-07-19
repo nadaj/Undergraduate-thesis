@@ -20,8 +20,8 @@
       		<div class="panel-body">
       		    <div class="bs-component">
                   <p><b>Opis: </b>{{ $voting->description }}</p>
-                  <p><b>Vreme početka:</b> {{ $voting->from }}</p>
-                  <p><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                  <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <br/> 
               		<div class="progress progress-striped active">
                 		<div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
@@ -35,8 +35,8 @@
             <div class="panel-body">
                 <div class="bs-component">
                   <p><b>Opis: </b>{{ $voting->description }}</p>
-                  <p><b>Vreme početka:</b> {{ $voting->from }}</p>
-                  <p><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                  <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <br/> 
                     <div class="progress progress-striped active">
                         <div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
@@ -59,8 +59,8 @@
             <div class="panel-body">
                 <div class="bs-component">
                   <p><b>Opis: </b>{{ $voting->description }}</p>
-                  <p><b>Vreme početka:</b> {{ $voting->from }}</p>
-                  <p><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                  <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                 </div>
             </div>
         </div>
@@ -70,8 +70,8 @@
             <div class="panel-body">
                 <div class="bs-component">
                   <p><b>Opis: </b>{{ $voting->description }}</p>
-                  <p><b>Vreme početka:</b> {{ $voting->from }}</p>
-                  <p><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                  <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
                 </div>
             </div>
         </div>

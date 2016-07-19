@@ -15,8 +15,8 @@
   		<div class="panel-heading" style="text-transform: uppercase">{{ $voting->name }}</div>
   		<div class="panel-body">
   		    <div class="bs-component">
-                <p id="vreme_pocetka"><b>Vreme početka:</b> {{ $voting->from }}</p>
-                <p id="vreme_zavrsetka"><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                 <br/> 
                 <input type="hidden" name="votings_id" value="{{ $voting->id }}" />
                 <div class="progress progress-striped active">
@@ -31,8 +31,8 @@
         <div class="panel-heading" style="text-transform: uppercase">{{ $voting->name }}</div>
         <div class="panel-body">
             <div class="bs-component">
-                <p id="vreme_pocetka"><b>Vreme početka:</b> {{ $voting->from }}</p>
-                <p id="vreme_zavrsetka"><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
+                <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                 <br/> 
                 <input type="hidden" name="votings_id" value="{{ $voting->id }}" />
                 <div class="progress progress-striped active">

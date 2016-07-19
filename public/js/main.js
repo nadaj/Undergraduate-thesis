@@ -303,38 +303,5 @@ $(document).ready(function() {
         t1.style.display = "none";
     });  
 
-    // format date
-    // $('p:visible[id*=vreme_pocetka]').each(function() {
-
-    //     var vreme = document.getElementById("vreme_pocetka").innerHTML;
-    //     console.log(vreme); 
-    //     var startIndex = vreme.indexOf('</b>') + 5;
-    //     var datum = vreme.substring(startIndex);
-    //     var day = datum.substring(8, 10);
-    //     var year = datum.substring(0, 4);
-    //     var mon = datum.substring(5, 7);
-    //     var nov_datum = day + "-" + mon + "-" + year + datum.substring(10);
-
-    //     document.getElementById("vreme_pocetka").innerHTML = 
-    //         vreme.substring(0, startIndex) + nov_datum;
-    // });
-
-    // $("#vreme_zavrsetka").each(function() {
-    //     var vreme = document.getElementById("vreme_zavrsetka").innerHTML;
-    //     var startIndex = vreme.indexOf('</b>') + 5;
-    //     var datum = vreme.substring(startIndex);
-    //     var day = datum.substring(8, 10);
-    //     var year = datum.substring(0, 4);
-    //     var mon = datum.substring(5, 7);
-    //     var nov_datum = day + "-" + mon + "-" + year + datum.substring(10);
-
-    //     document.getElementById("vreme_zavrsetka").innerHTML = 
-    //         vreme.substring(0, startIndex) + nov_datum;
-    // });
-
-    // if (document.getElementById("progress_bar") != null)
-    // {
-    //     console.log('fdfs');
-    // }
 });
  
