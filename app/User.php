@@ -23,7 +23,7 @@ class User extends Authenticatable
 
     public function hasRole($role)
     {
-        if ($this->role_id === intval($role)) {
+        if (intval($this->role_id) === intval($role)) {
             return true;
         }
         return false;

@@ -22,7 +22,7 @@
         </div>
         <div class="col-md-offset-1">
             <button type="submit" class="btn btn-raised btn-default btn-lg" name="submit">
-                Glasaj
+                Glasajte
             </button>
         </div>
         <div class="col-md-offset-1">

@@ -24,7 +24,9 @@ class InitiatorController extends Controller
     public function getInitiatorHome()
 	{
 		$date_now = Carbon::now();
-		$votings = Voting::where('to', '>=', $date_now)->simplePaginate(5, ['*'], 'page_current');		
+		$votings = Voting::where('from', '<=', $date_now)
+						->where('to', '>=', $date_now)
+						->simplePaginate(5, ['*'], 'page_current');		
 		$temp_current = Voting::where('to', '>=', $date_now)->get();
 
 		// setting progresses for current votings
@@ -72,17 +74,22 @@ class InitiatorController extends Controller
 	{
 		$date_now = Carbon::now();
 		$my_votings = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('from', '<=', $date_now)
 							->where('to', '>=', $date_now)
 							->simplePaginate(5, ['*'], 'page_current');	
 		$my_votings_past = Voting::where('initiator_id', '=', Auth::user()->id)
 							->where('to', '<', $date_now)
 							->simplePaginate(5, ['*'], 'page_past');		
 		$temp_current = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('from', '<=', $date_now)
 							->where('to', '>=', $date_now)
 							->get();
+		$temp_past = Voting::where('initiator_id', '=', Auth::user()->id)
+							->where('to', '<', $date_now)
+							->get();
 
-		// setting progresses for current votings
-		for($i = 0; $i < count($temp_current); $i++)
+		// setting progresses and num of people that voted for current votings
+		for ($i = 0; $i < count($temp_current); $i++)
 		{
 			$start = new \Moment\Moment($temp_current[$i]->from);
 			$duration = $start->from($temp_current[$i]->to);
@@ -91,9 +98,33 @@ class InitiatorController extends Controller
 			$duration_now_days = $duration_now->getDays();
 
 			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+
+			$num_to_vote = Ticket::where('votings_id', '=', $temp_current[$i]->id)->count();
+			$num_voted = Ticket::where('votings_id', '=', $temp_current[$i]->id)
+									->where('answers_id', '!=', null)
+									->count();
+			$proc[$i] = ($num_voted * 100)/$num_to_vote;
 		}
 
-		return view('initiator.votings', compact('my_votings', 'progresses', 'my_votings_past'));
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
+			$past_answers[$i] = '';
+			$num_to_vote = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			foreach ($answers as $answer) {
+				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
+
+				$num_voted = Ticket::where('votings_id', '=', $temp_past[$i]->id)
+										->where('answers_id', '=', $answer->id)
+										->count();
+				$num_voted = ($num_voted * 100)/$num_to_vote;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . '%' . "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+			}
+			$past_answers[$i] = nl2br($past_answers[$i]);
+		}
+
+		return view('initiator.votings', compact('my_votings', 'progresses', 'my_votings_past'
+			, 'proc', 'past_answers'));
 	}
 
 	public function getCreateVoting()
@@ -192,8 +223,7 @@ class InitiatorController extends Controller
 			Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
 			Session::flash('count', '1');
 
-			$votings = Voting::all();
-			return view('initiator.home', compact('votings'));
+			return $this->getInitiatorHome();
 		}
 		else
 		{
@@ -334,14 +364,23 @@ class InitiatorController extends Controller
 		Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
 		Session::flash('count', '1');
 
-		$votings = Voting::all();
-		return view('initiator.home', compact('votings'));
+		return $this->getInitiatorHome();
 	}
 
 	public function getVotingInfo($votings_id)
 	{
-		$voting = Voting::where('id', '=', $votings_id)->firstOrFail();
+		$datenow = Carbon::now();
+		$voting = Voting::where('id', '=', $votings_id)
+						->where('from', '<=', $datenow)
+						->where('to', '>=', $datenow)
+						->get();
 
+		if ($voting->isEmpty())
+		{
+			return redirect('error')->with('fail', 'Nije validan zahtev!');
+		}
+		
+		$voting = $voting[0];
 		$start = new \Moment\Moment($voting->from);
 		$duration = $start->from($voting->to);
 		$duration_now = $start->fromNow();
@@ -418,5 +457,19 @@ class InitiatorController extends Controller
 		$answers = Answer::where('votings_id', '=', $votings_id->first()->votings_id)->get();
 		
 		return view('initiator.vote', compact('ticket_id', 'answers', 'voting'));
+	}
+
+	public function deleteVoting(Request $request)
+	{
+		if ($request->ajax())
+		{
+			$tickets = Ticket::where('votings_id', '=', $request['voting_id'])
+								->delete();
+			$answers = Answer::where('votings_id', '=', $request['voting_id'])
+								->delete();
+			$votings = Voting::where('id', '=', $request['voting_id'])
+						->delete();
+
+		}
 	}
 }

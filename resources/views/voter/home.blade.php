@@ -15,12 +15,10 @@
   		<div class="panel-heading" style="text-transform: uppercase">{{ $voting->name }}</div>
   		<div class="panel-body">
   		    <div class="bs-component">
-                <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
-                <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
-                <br/> 
+                <p><b>Opis:</b> {{ $voting->description }}</p><br/> 
                 <input type="hidden" name="votings_id" value="{{ $voting->id }}" />
                 <div class="progress progress-striped active">
-                    <div id="progress_bar" class="progress-bar" style="width: 10%"></div>
+                    <div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
                 </div>
                 <a href="{{ route('voter.votinginfo', ['votings_id' => $voting->id]) }}" class="btn btn-primary btn-lg btn-block btn-raised">Više informacija</a>
             </div>
@@ -31,12 +29,10 @@
         <div class="panel-heading" style="text-transform: uppercase">{{ $voting->name }}</div>
         <div class="panel-body">
             <div class="bs-component">
-                <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
-                <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
-                <br/> 
+                <p><b>Opis:</b> {{ $voting->description }}</p><br/> 
                 <input type="hidden" name="votings_id" value="{{ $voting->id }}" />
                 <div class="progress progress-striped active">
-                    <div class="progress-bar" style="width: 10%"></div>
+                    <div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
                 </div>
                 <a href="{{ route('voter.votinginfo', ['votings_id' => $voting->id]) }}" class="btn btn-default btn-lg btn-block btn-raised">Više informacija</a>
             </div>

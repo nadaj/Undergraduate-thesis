@@ -22,6 +22,7 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Procenat onih koji su glasali: </b>{{ $proc[$i] }}%</p>
                   <br/> 
               		<div class="progress progress-striped active">
                 		<div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
@@ -37,6 +38,7 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Procenat onih koji su glasali: </b>{{ $proc[$i] }}%</p>
                   <br/> 
                     <div class="progress progress-striped active">
                         <div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
@@ -61,6 +63,8 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
+                  <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>
             </div>
         </div>
@@ -72,6 +76,8 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
+                  <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
+                  <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>
             </div>
         </div>
@@ -80,4 +86,25 @@
         @endforeach
         {!! $my_votings_past->render() !!}
     </div>
+
+    <div class="modal fade" id="deletevotingmodal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Brisanje glasanja</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>Da li ste sigurni da želite da obrišete glasanje?</p>
+                    <input type="hidden" name="voting_id" value="{{ $voting->id }}" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustanite</button>
+                    <button type="button" id="nastavi_sa_brisanjem" class="btn btn-primary">Obrišite</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="_token" value="{{ Session::token() }}" />
 @endsection

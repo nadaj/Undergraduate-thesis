@@ -180,6 +180,13 @@ Route::post('/initiator/accessvote', [
     'as' => 'initiator.accessvote'
 ]);
 
+Route::post('/initiator/deletevoting', [
+    'uses' => 'InitiatorController@deleteVoting',
+    'middleware' => 'roles',
+    'roles' => '2',
+    'as' => 'initiator.deletevoting'
+]);
+
 Route::get('/initiator/vote/{ticket_id}', [
     'uses' => 'InitiatorController@getVote',
     'middleware' => 'roles',

@@ -140,7 +140,7 @@
 
     <div class="center">
         <button type="submit" class="btn btn-raised btn-success btn-lg" name="pokreni">
-            Pokreni
+            Pokrenite
         </button>
 
         <button type="submit" class="btn btn-raised btn-danger btn-lg" name="pregled">

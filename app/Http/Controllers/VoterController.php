@@ -18,8 +18,23 @@ class VoterController extends Controller
     public function getVoterHome()
 	{
 		$datenow = Carbon::now();
-		$votings = Voting::where('from', '<=', $datenow)->get();
-		return view('voter.home', compact('votings'));
+		$votings = Voting::where('from', '<=', $datenow)
+							->where('to', '>=', $datenow)
+							->get();
+
+		// setting progresses for current votings
+		for($i = 0; $i < count($votings); $i++)
+		{
+			$start = new \Moment\Moment($votings[$i]->from);
+			$duration = $start->from($votings[$i]->to);
+			$duration_now = $start->fromNow();
+			$duration_days = $duration->getDays();
+			$duration_now_days = $duration_now->getDays();
+
+			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+		}
+
+		return view('voter.home', compact('votings', 'progresses'));
 	}
 
 	public function getChangePassword()
@@ -50,8 +65,27 @@ class VoterController extends Controller
 
 	public function getVotingInfo($votings_id)
 	{
-		$voting = Voting::where('id', '=', $votings_id)->firstOrFail();
-		return view('voter.voting', compact('voting'));
+		$datenow = Carbon::now();
+		$voting = Voting::where('id', '=', $votings_id)
+						->where('from', '<=', $datenow)
+						->where('to', '>=', $datenow)
+						->get();
+
+		if ($voting->isEmpty())
+		{
+			return redirect('error')->with('fail', 'Nije validan zahtev!');
+		}
+		
+		$voting = $voting[0];
+		$start = new \Moment\Moment($voting->from);
+		$duration = $start->from($voting->to);
+		$duration_now = $start->fromNow();
+		$duration_days = $duration->getDays();
+		$duration_now_days = $duration_now->getDays();
+
+		$progress = ($duration_now_days / $duration_days) * 100;
+
+		return view('voter.voting', compact('voting', 'progress'));
 	}
 
 	public function getAccessVote(Request $request)

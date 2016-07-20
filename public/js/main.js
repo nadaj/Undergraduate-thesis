@@ -303,5 +303,24 @@ $(document).ready(function() {
         t1.style.display = "none";
     });  
 
+    $('#nastavi_sa_brisanjem').on('click', function(e){  
+        var obj = $(this);
+
+        e.preventDefault();
+        $.ajax({
+            url: base_url + 'initiator/deletevoting',
+            method: 'post',             
+            data: {
+                voting_id: $('input[name="voting_id"]').val(),
+                _token: $('input[name="_token"]').val()
+            },
+            success: function(data){
+                window.location.replace(base_url + 'initiator/votings'); 
+            },
+            error: function(data){
+                
+            },
+        });
+    }); 
 });
  

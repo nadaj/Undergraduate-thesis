@@ -47,9 +47,12 @@
 
 		<div class="center">
 			<button type="submit" class="btn btn-raised btn-danger btn-lg" name="submit">
-				Promeni
+				Promenite
 			</button>
-			<input type="hidden" name="_token" value="{{ Session::token() }}" />		
+			<input type="hidden" name="_token" value="{{ Session::token() }}" />
+			<a href="{{ route('login') }}" class="btn btn-raised btn-default btn-lg">
+				Odustanite	
+			</a>		
 		</div>
 	</form>
 @endsection

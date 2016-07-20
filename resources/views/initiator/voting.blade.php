@@ -13,7 +13,7 @@
                     <div class="progress-bar" style="width: {{ $progress }}%"></div>
                 </div>
                 <button data-toggle="modal" data-target="#votingmodal" 
-                class="btn btn-primary btn-lg btn-block btn-raised">Glasaj</button>
+                class="btn btn-primary btn-lg btn-block btn-raised">Glasajte</button>
             </div>
   		</div>
 	</div>
@@ -37,8 +37,8 @@
                 </div>
                     
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
-                    <button type="button" id="nastavi_sa_tiketom_init" class="btn btn-primary">Nastavi</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustanite</button>
+                    <button type="button" id="nastavi_sa_tiketom_init" class="btn btn-primary">Nastavite</button>
                 </div>
             </div>
         </div>
