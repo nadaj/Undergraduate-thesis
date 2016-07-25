@@ -14,6 +14,14 @@
                 @foreach($answers as $answer)
                     <p>{{ $answer->answer }}</p>
                 @endforeach
+                <p>
+                    <b>Može se odabrati više odgovora:</b> 
+                    @if ($more_ans)
+                    Da
+                    @else
+                    Ne
+                    @endif
+                </p>
                 <p><b>Glasači:</b></p>
                 @foreach($voters as $voter)
                     <p>{{ $voter }}</p>

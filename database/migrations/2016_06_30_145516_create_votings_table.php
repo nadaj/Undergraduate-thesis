@@ -18,6 +18,7 @@ class CreateVotingsTable extends Migration
             $table->text('description');
             $table->dateTime('from');
             $table->dateTime('to');
+            $table->boolean('multiple_answers');
             $table->integer('initiator_id')->unsigned();
             $table->foreign('initiator_id')->references('id')->on('users');
         });

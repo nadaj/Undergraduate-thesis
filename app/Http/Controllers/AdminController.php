@@ -16,9 +16,11 @@ class AdminController extends Controller
     public function getAdminHome()
 	{
 		$date_now = Carbon::now();
-		$current_votings = Voting::where('to', '>=', $date_now)->simplePaginate(5, ['*'], 'page_current');		
+		$current_votings = Voting::where('from', '<=', $date_now)
+						->where('to', '>=', $date_now)->simplePaginate(5, ['*'], 'page_current');		
 		$past_votings = Voting::where('to', '<', $date_now)->simplePaginate(5, ['*'], 'page_past');			
-		$temp_current = Voting::where('to', '>=', $date_now)->get();
+		$temp_current = Voting::where('from', '<=', $date_now)
+						->where('to', '>=', $date_now)->get();
 
 		// setting progresses for current votings
 		for($i = 0; $i < count($temp_current); $i++)

@@ -12,6 +12,7 @@ use App\Ticket;
 use App\Answer;
 use Session;
 use Carbon\Carbon;
+use DB;
 
 class VoterController extends Controller
 {
@@ -141,15 +142,56 @@ class VoterController extends Controller
 	public function postVote(Request $request)
 	{
 		Session::forget('vote_success');
-		$this->validate($request, [
-			'optionsRadios' => 'required'
-        ]);
+		$votings_id = Ticket::find($request['ticket'])->votings_id;
+		
+		if (! Voting::find($votings_id)->multiple_answers)
+		{
+			$this->validate($request, [
+				'optionsRadios' => 'required'
+	        ]);
 
-		//	save answer
-		Ticket::where('id', '=', $request['ticket'])->update([
-			'answers_id' => $request['optionsRadios']
-		]);
+	        //	save answer and check if already answered, if so then just modify it
+			$answered = DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+													->count();
 
+			if ($answered > 0)
+			{
+				DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+											->update([
+												'answers_id' => $request['optionsRadios']
+											]);
+			}
+			else
+			{
+				DB::table('answers_tickets')->insert([
+					'answers_id' => $request['optionsRadios'],
+				    'tickets_id' => $request['ticket']
+				]);
+			}
+		}
+		else
+		{
+			$this->validate($request, [
+				'optionsCheckbox' => 'required'
+	        ]);
+
+	        $answered = DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+													->count();
+
+			if ($answered > 0)
+			{
+				DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+											->delete();
+			}
+				
+	        foreach ($request['optionsCheckbox'] as $option) {
+	        	DB::table('answers_tickets')->insert([
+					'answers_id' => $option,
+				    'tickets_id' => $request['ticket']
+				]);
+	        }
+		}
+			
 		$request->session()->flash('vote_success', 'Uspešno ste glasali!');
 		$request->session()->flash('count', '1');
 		return redirect()->route('voter.home');

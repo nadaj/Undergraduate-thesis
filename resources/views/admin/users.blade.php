@@ -9,7 +9,6 @@
 	<input type="hidden" name="_token" value="{{{ csrf_token() }}}" />
 	<table class="footable table table-striped table-hover" id="table1" style="display:table">
   		<thead>
-  			<!-- SMISLI DA BUDE HIDDEN KAD SE SMANJI -->
   			<tr>
 			    <th>#</th>
 			    <th>Ime i prezime</th>

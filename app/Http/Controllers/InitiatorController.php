@@ -27,7 +27,8 @@ class InitiatorController extends Controller
 		$votings = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)
 						->simplePaginate(5, ['*'], 'page_current');		
-		$temp_current = Voting::where('to', '>=', $date_now)->get();
+		$temp_current = Voting::where('from', '<=', $date_now)
+						->where('to', '>=', $date_now)->get();
 
 		// setting progresses for current votings
 		for($i = 0; $i < count($temp_current); $i++)
@@ -100,9 +101,14 @@ class InitiatorController extends Controller
 			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 
 			$num_to_vote = Ticket::where('votings_id', '=', $temp_current[$i]->id)->count();
-			$num_voted = Ticket::where('votings_id', '=', $temp_current[$i]->id)
-									->where('answers_id', '!=', null)
-									->count();
+
+			$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->select('answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_current[$i]->id)
+						->distinct()
+						->get()
+						->count();
+
 			$proc[$i] = ($num_voted * 100)/$num_to_vote;
 		}
 
@@ -110,15 +116,17 @@ class InitiatorController extends Controller
 		{
 			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
 			$past_answers[$i] = '';
-			$num_to_vote = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			//$num_to_vote = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
 			foreach ($answers as $answer) {
 				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
 
-				$num_voted = Ticket::where('votings_id', '=', $temp_past[$i]->id)
-										->where('answers_id', '=', $answer->id)
-										->count();
-				$num_voted = ($num_voted * 100)/$num_to_vote;
-				$past_answers[$i] = $past_answers[$i] . $num_voted . '%' . "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_past[$i]->id)
+						->where('answers_tickets.answers_id', '=', $answer->id)
+						->distinct()
+						->count();
+
+				$past_answers[$i] = $past_answers[$i] . $num_voted . "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
 			}
 			$past_answers[$i] = nl2br($past_answers[$i]);
 		}
@@ -136,15 +144,35 @@ class InitiatorController extends Controller
 	public function createVoting(Request $request)
 	{
 		$datenow = Carbon::now();
+
 		Session::forget('vote_success');
-		$this->validate($request, [
+		$rules = [
 			'naslov' => 'required|max:100|unique:votings,name',
             'opis' => 'required|max:65535',
             'vreme1' => 'required:date|after:' . $datenow,
             'vreme2' => 'required:date|after:vreme1',
-            'odgovori' => 'required|min:2',
-            'glasaci' => 'required|min:1',
-	    ]);
+            'glasaci' => 'required|min:1'
+	    ];
+
+	    $i = 0;
+	    $odgovori = array();
+	    if ($request['odg'])
+	    {
+		    foreach ($request['odg'] as $odg) {
+	    		if ($odg !== "" && !in_array(strtolower($odg), array_map('strtolower', $odgovori)))
+	        	{
+	        		$odgovori[$i] = $odg;
+		        	$i++;
+	        	}
+		    }
+		}
+
+	    if ($i < 2)
+	    {
+	    	$rules['odgovori'] = 'required|min:2';
+	    }
+
+		$this->validate($request, $rules);
 
 		if ($request['pokreni'] === "")
 		{
@@ -154,13 +182,14 @@ class InitiatorController extends Controller
 			    'description' => $request['opis'], 
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
+			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
 			    'initiator_id' => Auth::user()->id
 			]);
 
 			$last_votings_id = DB::table('votings')->max('id');
 			
 			// add answers entries
-			foreach ($request['odgovori'] as $odgovor)
+			foreach ($request['odg'] as $odgovor)
 			{
 				DB::table('answers')->insert([
 					'votings_id' => $last_votings_id,
@@ -232,12 +261,13 @@ class InitiatorController extends Controller
 			    'description' => $request['opis'], 
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
+			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
 			    'initiator_id' => Auth::user()->id
 			]);
 
 			$i = 0;
 
-			foreach ($request['odgovori'] as $odgovor)
+			foreach ($request['odg'] as $odgovor)
 			{
 				$answers[$i++] = new Answer([
 	        		'answer' => $odgovor
@@ -245,15 +275,16 @@ class InitiatorController extends Controller
 			}
 
 			$voters = $request['glasaci'];
-
+			$more_ans = array_key_exists('vise_odg', $request->all());
 			$request->session()->put('naslov', $request['naslov']);
 			$request->session()->put('opis', $request['opis']);
 			$request->session()->put('vreme1', $request['vreme1']);
 			$request->session()->put('vreme2', $request['vreme2']);
-			$request->session()->put('odgovori', $request['odgovori']);
+			$request->session()->put('odg', $request['odg']);
 			$request->session()->put('glasaci', $request['glasaci']);
+			$request->session()->put('vise_odg', array_key_exists('vise_odg', $request->all()));
 
-			return view('initiator.reviewvoting', compact('answers', 'voting', 'voters'));
+			return view('initiator.reviewvoting', compact('answers', 'voting', 'voters', 'more_ans'));
 		}
 		
 	}
@@ -283,88 +314,114 @@ class InitiatorController extends Controller
 	public function createReviewedVoting(Request $request)
 	{
 		Session::forget('vote_success');
-		DB::table('votings')->insert([
-			'name' => $request->session()->get('naslov'), 
-		    'description' => $request->session()->get('opis'), 
-		    'from' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme1'))), 
-		    'to' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme2'))), 
-		    'initiator_id' => Auth::user()->id
-		]);
-
-		$last_votings_id = DB::table('votings')->max('id');
-
-		// add answers entries
-		foreach ($request->session()->get('odgovori') as $odgovor)
+		if ($request['pokreni'] === "")
 		{
-			DB::table('answers')->insert([
-				'votings_id' => $last_votings_id,
-        		'answer' => $odgovor
+			DB::table('votings')->insert([
+				'name' => $request->session()->get('naslov'), 
+			    'description' => $request->session()->get('opis'), 
+			    'from' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme1'))), 
+			    'to' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme2'))), 
+			    'multiple_answers' => $request->session()->get('vise_odg'),
+			    'initiator_id' => Auth::user()->id
 			]);
-		}
 
-		// send to all voters an email with the ticket 
-		foreach ($request->session()->get('glasaci') as $glasac)
+			$last_votings_id = DB::table('votings')->max('id');
+
+			// add answers entries
+			foreach ($request->session()->get('odg') as $odgovor)
+			{
+				DB::table('answers')->insert([
+					'votings_id' => $last_votings_id,
+	        		'answer' => $odgovor
+				]);
+			}
+
+			// send to all voters an email with the ticket 
+			foreach ($request->session()->get('glasaci') as $glasac)
+			{
+				// creating ticket encrypted with voter's hashed password
+				$nonce = Str::random(32);
+				$password = User::where('email', '=', $glasac)->get()->first()->password;
+				$hexstr = unpack('H*', $password);
+				$key = substr(array_shift($hexstr), 0, 32);
+				
+				// create a random IV to use with CBC encoding
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+				$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+
+				$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $nonce, MCRYPT_MODE_CBC, $iv);
+
+				$hashed_nonce = $iv . $hashed_nonce;
+				$hashed_nonce = base64_encode($hashed_nonce);
+
+				DB::table('tickets')->insert([
+					'votings_id' => $last_votings_id,
+	        		'nonce' => $nonce
+				]);
+
+				$sendgrid = new SendGrid('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');
+	        	$email = new SendGrid\Email();
+	       
+		        $m = "<p>Glasanje:<br/><br/>
+		        	Naziv: " . $request->session()->get('naslov').
+		        	"<br/>Opis: " . $request->session()->get('opis') . 
+		        	"<br/>Vreme početka: " . date('d-m-Y H:i:s', strtotime($request->session()->get('vreme1'))).
+		        	"<br/>Vreme završetka: " . date('d-m-Y H:i:s', strtotime($request->session()->get('vreme2'))).
+			        	"<br/><br/><b>Tiket koji je potrebno uneti pri glasanju:<br/>".
+			        	$hashed_nonce . "</b></p>";
+	   
+	        $email
+	            ->addTo($glasac)
+	            ->setFrom('votingsystemetf@gmail.com')
+	            ->setSubject('e-Glasanje: Dobili ste pozivnicu za glasanje')
+	            ->setHtml($m)
+	        ;
+
+	        try {
+	            $sendgrid->send($email);
+
+	        } catch(\SendGrid\Exception $e) {
+	            echo $e->getCode();
+	            foreach($e->getErrors() as $er) {
+	                echo $er;
+	            }
+	        }	
+			}
+
+			$request->session()->forget('naslov');
+			$request->session()->forget('opis');
+			$request->session()->forget('vreme1');
+			$request->session()->forget('vreme2');
+			$request->session()->forget('odg');
+			$request->session()->forget('glasaci');
+			$request->session()->forget('vise_odg');
+
+			Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
+			Session::flash('count', '1');
+
+			return $this->getInitiatorHome();
+		}
+		else
 		{
-			// creating ticket encrypted with voter's hashed password
-			$nonce = Str::random(32);
-			$password = User::where('email', '=', $glasac)->get()->first()->password;
-			$hexstr = unpack('H*', $password);
-			$key = substr(array_shift($hexstr), 0, 32);
+			$request['naslov'] = $request->session()->get('naslov');
+			$request['opis'] = $request->session()->get('opis');
+			$request['vreme1'] = $request->session()->get('vreme1');
+			$request['vreme2'] = $request->session()->get('vreme2');
+			$request['odg'] = $request->session()->get('odg');
+			$request['glasaci'] = $request->session()->get('glasaci');
+			if ($request->session()->get('vise_odg'))
+				$request['vise_odg'] = true;
 			
-			// create a random IV to use with CBC encoding
-			$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-
-			$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $nonce, MCRYPT_MODE_CBC, $iv);
-
-			$hashed_nonce = $iv . $hashed_nonce;
-			$hashed_nonce = base64_encode($hashed_nonce);
-
-			DB::table('tickets')->insert([
-				'votings_id' => $last_votings_id,
-        		'nonce' => $nonce
-			]);
-
-			$sendgrid = new SendGrid('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');
-        	$email = new SendGrid\Email();
-       
-	        $m = "<p>Glasanje:<br/><br/>
-	        	Naziv: " . $request->session()->get('naslov').
-	        	"<br/>Opis: " . $request->session()->get('opis') . 
-	        	"<br/>Vreme početka: " . date('d-m-Y H:i:s', strtotime($request->session()->get('vreme1'))).
-	        	"<br/>Vreme završetka: " . date('d-m-Y H:i:s', strtotime($request->session()->get('vreme2'))).
-		        	"<br/><br/><b>Tiket koji je potrebno uneti pri glasanju:<br/>".
-		        	$hashed_nonce . "</b></p>";
-   
-        $email
-            ->addTo($glasac)
-            ->setFrom('votingsystemetf@gmail.com')
-            ->setSubject('e-Glasanje: Dobili ste pozivnicu za glasanje')
-            ->setHtml($m)
-        ;
-
-        try {
-            $sendgrid->send($email);
-
-        } catch(\SendGrid\Exception $e) {
-            echo $e->getCode();
-            foreach($e->getErrors() as $er) {
-                echo $er;
-            }
-        }	
-		}
-
-		$request->session()->forget('naslov');
-		$request->session()->forget('opis');
-		$request->session()->forget('vreme1');
-		$request->session()->forget('vreme2');
-		$request->session()->forget('odgovori');
-		$request->session()->forget('glasaci');
-
-		Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
-		Session::flash('count', '1');
-
-		return $this->getInitiatorHome();
+			$request->session()->forget('naslov');
+			$request->session()->forget('opis');
+			$request->session()->forget('vreme1');
+			$request->session()->forget('vreme2');
+			$request->session()->forget('odg');
+			$request->session()->forget('glasaci');
+			$request->session()->forget('vise_odg');
+			
+			return redirect()->back()->withInput();
+		}	
 	}
 
 	public function getVotingInfo($votings_id)
@@ -432,15 +489,56 @@ class InitiatorController extends Controller
 	public function postVote(Request $request)
 	{
 		Session::forget('vote_success');
-		$this->validate($request, [
-			'optionsRadios' => 'required'
-        ]);
+		$votings_id = Ticket::find($request['ticket'])->votings_id;
+		
+		if (! Voting::find($votings_id)->multiple_answers)
+		{
+			$this->validate($request, [
+				'optionsRadios' => 'required'
+	        ]);
 
-		//	save answer
-		Ticket::where('id', '=', $request['ticket'])->update([
-			'answers_id' => $request['optionsRadios']
-		]);
+	        //	save answer and check if already answered, if so then just modify it
+			$answered = DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+													->count();
 
+			if ($answered > 0)
+			{
+				DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+											->update([
+												'answers_id' => $request['optionsRadios']
+											]);
+			}
+			else
+			{
+				DB::table('answers_tickets')->insert([
+					'answers_id' => $request['optionsRadios'],
+				    'tickets_id' => $request['ticket']
+				]);
+			}
+		}
+		else
+		{
+			$this->validate($request, [
+				'optionsCheckbox' => 'required'
+	        ]);
+
+	        $answered = DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+													->count();
+
+			if ($answered > 0)
+			{
+				DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
+											->delete();
+			}
+				
+	        foreach ($request['optionsCheckbox'] as $option) {
+	        	DB::table('answers_tickets')->insert([
+					'answers_id' => $option,
+				    'tickets_id' => $request['ticket']
+				]);
+	        }
+		}
+		
 		Session::flash('vote_success', 'Uspešno ste glasali!');
 		Session::flash('count', '1');
 		return redirect()->route('initiator.home');
@@ -463,6 +561,12 @@ class InitiatorController extends Controller
 	{
 		if ($request->ajax())
 		{
+			$tickets = Ticket::where('votings_id', '=', $request['voting_id'])->get();
+			foreach ($tickets as $ticket) {
+				DB::table('answers_tickets')->where('tickets_id', '=', $ticket->id)
+										->delete();
+			}
+			
 			$tickets = Ticket::where('votings_id', '=', $request['voting_id'])
 								->delete();
 			$answers = Answer::where('votings_id', '=', $request['voting_id'])

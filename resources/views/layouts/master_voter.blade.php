@@ -3,7 +3,7 @@
 	<head>
 		<link rel="shortcut icon" href="{{ URL::asset('images/favicon.ico') }}" />
 		<meta charset="UTF-8" />
-		<title>е-Гласање</title>
+		<title>е-Glasanje</title>
 		<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed|Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<link rel="stylesheet" type="text/css" href="{{ URL::asset('css/main.css') }}"/>

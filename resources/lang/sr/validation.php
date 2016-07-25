@@ -142,7 +142,7 @@ return [
             'after' => 'Vreme završetka nije posle vremena početka!',
         ],
         'odgovori' => [
-            'required' => 'Niste uneli odgovore!',
+            'required' => 'Potrebno je uneti bar 2 odgovora!',
             'min' => 'Potrebno je uneti bar 2 odgovora!',
         ],
         'glasaci' => [
@@ -154,6 +154,9 @@ return [
             'exists' => 'Uneti tiket nije validan!',
         ],
         'optionsRadios' => [
+            'required' => 'Niste uneli odgovor!',
+        ],
+        'optionsCheckbox' => [
             'required' => 'Niste uneli odgovor!',
         ],
     ],

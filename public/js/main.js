@@ -1,5 +1,5 @@
 var base_url = 'http://localhost:8000/';
-
+var cnt = 4;
 $(document).ready(function() {
 
     $('.checkbox_click').on('change', function(){                  
@@ -154,52 +154,29 @@ $(document).ready(function() {
         }
     });  
 
-    $('#add_answer').on('click', function(e){    
-        var obj = $('#unet_odgovor');
-        var odgovori = document.getElementById("odgovori");
-        var answerExists = false;
-
-        // provera da li takav odgovor vec postoji i da li je unet prazan odgovor
-        if (obj.val() != "" && $.trim(obj.val()).length != 0)
-        {
-            for (var i = 1; i < odgovori.length; i++) 
-                if (odgovori.options[i].text.toUpperCase() == obj.val().toUpperCase())
-                    answerExists = true;
-
-            if (answerExists == false)
-            {
-                var opt = document.createElement('option');
-                opt.value = obj.val();
-                opt.innerHTML = obj.val();
-                opt.selected = true;
-                odgovori.appendChild(opt);
-            }
-        }
-
-        obj.val("");
-        e.preventDefault();
-    }); 
-
-    $('#add_user').on('click', function(e){    
+    $('#add_user').on('click', function(e){  
         var obj = $('#korisnik');
-        var glasaci = document.getElementById("glasaci");
+        var glasaci = document.getElementById("tablevoters");
         var userExists = false;
 
         // provera da li takav odgovor vec postoji i da li je unet prazan odgovor
         if (obj.val() != 0)
         {
-            for (var i = 0; i < glasaci.length; i++) {
-                if (glasaci.options[i].text == $('#korisnik :selected').text())
+            for (var i = 0, row; row = glasaci.rows[i]; i++) {
+                if (row.cells[0].innerHTML == $('#korisnik :selected').text())
                     userExists = true;
             }
 
             if (userExists == false)
             {
+                if ($('#tablevoters tr').length == 1)
+                    glasaci.style.display = "table";
+                $('#tablevoters > tbody:last-child').append('<tr><td style="line-height:1.6">' + $('#korisnik :selected').text() + '</td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_glasaca" name="ukloni_glasaca"><i class="material-icons">delete</i></button></center></td></tr>');
                 var opt = document.createElement('option');
                 opt.value = $('#korisnik :selected').text();
                 opt.innerHTML = $('#korisnik :selected').text();
                 opt.selected = true;
-                glasaci.appendChild(opt);
+                document.getElementById("glasaci").appendChild(opt);
             }
         }
 
@@ -322,5 +299,29 @@ $(document).ready(function() {
             },
         });
     }); 
+
+    $('#dodaj_odgovor').on('click', function(e){  
+        $('#tableanswers > tbody:last-child').append('<tr><td style="padding-bottom:2px;padding-top:0px"><div class="form-group" style="margin-top:0px;padding-bottom:0px;"><input type="text" style="margin-bottom:0px;padding-bottom:0px;padding-top:0px" class="form-control" name="odg[]"></div></td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_odgovor" name="ukloni_odgovor"><i class="material-icons">delete</i></button></center></td></tr>');
+        e.preventDefault();
+    }); 
+
+    $("[id^='ukloni_odgovor']").on('click', function(e){ 
+        $(this).closest("tr").remove();
+        e.preventDefault();
+    }); 
+
+    $('#tableanswers').on('click', '.btn-danger', function(e){  
+        $(this).closest("tr").remove();
+        e.preventDefault();
+    }); 
+
+    $('#tablevoters').on('click', '.btn-danger', function(e){  
+        $(this).closest("tr").remove();
+        $("#glasaci option[value='" + $(this).closest("tr").find('td:first').text() + "']").remove();
+        if ($('#tablevoters tr').length == 1)
+            document.getElementById("tablevoters").style.display = "none";
+        e.preventDefault();
+    }); 
+
 });
  
