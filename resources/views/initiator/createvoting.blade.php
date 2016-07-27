@@ -144,6 +144,69 @@
       </div>
     </div>
 
+
+    <div class="form-group label-floating">
+      <label>Kriterijum uspešnosti glasanja:</label>
+    </div>
+
+    <div class="row">
+        <div class="radio radio-primary" style="margin-left:5px">
+            @if (old('criteriumRadios') == "2")
+            <label style="color:#555555">
+                <input type="radio" name="criteriumRadios" id="criteriumRadios1" value="1"> Broj glasača
+            </label>
+            <label style="color:#555555">
+                <input type="radio" name="criteriumRadios" id="criteriumRadios2" value="2" checked> Broj glasova
+            </label>
+            @else
+            <label style="color:#555555">
+                <input type="radio" name="criteriumRadios" id="criteriumRadios1" value="1" checked> Broj glasača
+            </label>
+            <label style="color:#555555">
+                <input type="radio" name="criteriumRadios" id="criteriumRadios2" value="2"> Broj glasova
+            </label>
+            @endif
+        </div>
+        <div class="form-group col-md-3 col-sm-3" style="margin-top:5px">
+            @if (old('criteriumRadios') == "2")
+            <select name="opcija" id="opcija" class="form-control">
+                <option value="0">Odaberite odgovor:</option>
+                @if (old('odg') == null)
+                    <option value="Za">Za</option>
+                    <option value="Protiv">Protiv</option>
+                    <option value="Uzdržan">Uzdržan</option>
+                @else
+                    @foreach (old('odg') as $odg)
+                        <option value="{{ $odg }}" {{ (old('opcija') == $odg?"selected":"") }}>{{ $odg }}</option>
+                    @endforeach
+                @endif
+            </select>
+            @else
+            <select name="opcija" id="opcija" class="form-control" style="display:none">
+                <option value="0">Odaberite odgovor:</option>
+            </select>
+            @endif
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-3 col-sm-3" style="margin-top:0px">
+            <select name="relacija" id="relacija" class="form-control">
+                <option value="0" selected>Odaberite relaciju:</option>
+                <option value="=" {{ (old('relacija') == "="?"selected":"") }}>Jednako</option>
+                <option value="<>" {{ (old('relacija') == "<>"?"selected":"") }}>Različito</option>
+                <option value=">" {{ (old('relacija') == ">"?"selected":"") }}>Veće</option>
+                <option value="<" {{ (old('relacija') == "<"?"selected":"") }}>Manje</option>
+                <option value=">=" {{ (old('relacija') == ">="?"selected":"") }}>Veće ili jednako</option>
+                <option value="<=" {{ (old('relacija') == "<="?"selected":"") }}>Manje ili jednako</option>
+            </select>
+        </div>
+        <div class="form-group label-floating col-md-3 col-sm-3" style="margin-top:0px">
+            <label for="vrednost" class="control-label" style="color:#555555">Unesite vrednost:</label>
+            <input type="text" class="form-control" id="vrednost" name="vrednost" value="{{ old('vrednost') }}" >
+        </div>
+    </div>
+
     <div class="form-group label-floating">
       <label>Glasači:</label>
     </div>

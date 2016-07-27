@@ -159,6 +159,25 @@ return [
         'optionsCheckbox' => [
             'required' => 'Niste uneli odgovor!',
         ],
+        'relacija' => [
+            'required' => 'Niste uneli relaciju!',
+            'different' => 'Niste uneli relaciju!',
+        ],
+        'vrednost' => [
+            'required' => 'Niste uneli vrednost!',
+            'integer' => 'Vrednost nije ceo broj!',
+            'between' => 'Vrednost mora biti u okviru broja glasača!'
+        ],
+        'criteriumRadios' => [
+            'required' => 'Niste odabrali kriterijum!',
+        ],
+        'opcija' => [
+            'required' => 'Niste odabrali opciju za kriterijum!',
+            'different' => 'Niste odabrali opciju za kriterijum!',
+        ],
+        'opcija_odg' => [
+            'required' => 'Ne postoji unet takav odgovor za kriterijum!',
+        ],
     ],
 
     /*

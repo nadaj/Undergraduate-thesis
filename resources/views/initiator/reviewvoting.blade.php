@@ -22,6 +22,14 @@
                     Ne
                     @endif
                 </p>
+                <p><b>Kriterijum uspešnosti glasanja:</b></p>
+                <p>
+                    @if ($criteriumRadios == "1")
+                        Broj glasača je {{ $relacija }} {{ $vrednost }}
+                    @else
+                        Broj glasova za odgovor <i>{{ $opcija }}</i> je {{ $relacija }} {{ $vrednost }}
+                    @endif
+                </p>
                 <p><b>Glasači:</b></p>
                 @foreach($voters as $voter)
                     <p>{{ $voter }}</p>

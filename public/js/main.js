@@ -323,5 +323,33 @@ $(document).ready(function() {
         e.preventDefault();
     }); 
 
+    $("input[name='criteriumRadios']").on('change', function(e){ 
+        if ($("input[name='criteriumRadios']:checked").val() == 2) 
+        {
+            $('#opcija').html('<option value="Odaberite odgovor:">Odaberite odgovor:</option>');
+            
+            var y = document.getElementsByName('odg[]');
+            for (var i = 0; i < y.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = y[i].value;
+                opt.innerHTML = y[i].value;
+                document.getElementById("opcija").appendChild(opt);
+            }
+
+            document.getElementById("opcija").style.display = "block";
+        }
+        else
+        {
+            document.getElementById("opcija").style.display = "none";
+        }
+        e.preventDefault();
+    });
+
+    // $("#opcija").on('change', function() {
+    //     var obj = $(this);
+    //     var opcija = obj.val();
+
+    //     document.getElementById("opcija_skrivena").value = opcija;
+    // });
 });
  

@@ -144,15 +144,22 @@ class InitiatorController extends Controller
 	public function createVoting(Request $request)
 	{
 		$datenow = Carbon::now();
-
+		
 		Session::forget('vote_success');
 		$rules = [
 			'naslov' => 'required|max:100|unique:votings,name',
             'opis' => 'required|max:65535',
             'vreme1' => 'required:date|after:' . $datenow,
             'vreme2' => 'required:date|after:vreme1',
-            'glasaci' => 'required|min:1'
+            'glasaci' => 'required|min:1',
+            'vrednost' => 'required|integer|between:0,' . count($request['glasaci']),
+            'criteriumRadios' => 'required'
 	    ];
+
+	    if (!$request['relacija'] || $request['relacija'] === "0")
+	    {
+            $rules['relacija'] = 'required|different:0';
+	    }
 
 	    $i = 0;
 	    $odgovori = array();
@@ -171,6 +178,16 @@ class InitiatorController extends Controller
 	    {
 	    	$rules['odgovori'] = 'required|min:2';
 	    }
+	   
+	    if ($request['criteriumRadios'] && $request['criteriumRadios'] === "2")
+	    {
+	    	if ($request['opcija'] === "0")
+	    		$rules['opcija'] = 'required|different:0';
+	    	else if (!in_array($request['opcija'], $request['odg']))
+					$rules['opcija_odg'] = 'required';
+	    }
+	    else
+	    	$rules['opcija'] = 'required';
 
 		$this->validate($request, $rules);
 
@@ -194,6 +211,27 @@ class InitiatorController extends Controller
 				DB::table('answers')->insert([
 					'votings_id' => $last_votings_id,
 	        		'answer' => $odgovor
+				]);
+			}
+
+			if ($request['criteriumRadios'] === "2")
+			{
+				$answer_id = Answer::where('votings_id', '=' ,$last_votings_id)
+								   ->where('answer', '=', $request['opcija'])
+								   ->get()->first();
+				DB::table('voting_success')->insert([
+					'answer_id' => $answer_id->id,
+					'relation' => $request['relacija'],
+					'value' => $request['vrednost'],
+					'voting_id' => $last_votings_id
+				]);
+			}
+			else
+			{
+				DB::table('voting_success')->insert([
+					'relation' => $request['relacija'],
+					'value' => $request['vrednost'],
+					'voting_id' => $last_votings_id
 				]);
 			}
 
@@ -283,8 +321,18 @@ class InitiatorController extends Controller
 			$request->session()->put('odg', $request['odg']);
 			$request->session()->put('glasaci', $request['glasaci']);
 			$request->session()->put('vise_odg', array_key_exists('vise_odg', $request->all()));
+			$request->session()->put('relacija', $request['relacija']);
+			$request->session()->put('vrednost', $request['vrednost']);
+			$request->session()->put('criteriumRadios', $request['criteriumRadios']);
+			$request->session()->put('opcija', $request['opcija']);
 
-			return view('initiator.reviewvoting', compact('answers', 'voting', 'voters', 'more_ans'));
+			$relacija = $request['relacija'];
+			$vrednost = $request['vrednost'];
+			$opcija = $request['opcija'];
+			$criteriumRadios = $request['criteriumRadios'];
+
+			return view('initiator.reviewvoting', compact('answers', 'voting', 'voters',
+			 'more_ans', 'relacija', 'vrednost', 'opcija', 'criteriumRadios'));
 		}
 		
 	}
@@ -333,6 +381,28 @@ class InitiatorController extends Controller
 				DB::table('answers')->insert([
 					'votings_id' => $last_votings_id,
 	        		'answer' => $odgovor
+				]);
+			}
+
+			if ($request->session()->get('criteriumRadios') === "2")
+			{
+				$answer_id = Answer::where('votings_id', '=' ,$last_votings_id)
+								   ->where('answer', '=', $request->session()->get('opcija'))
+								   ->get()->first();
+
+				DB::table('voting_success')->insert([
+					'answer_id' => $answer_id->id,
+					'relation' => $request->session()->get('relacija'),
+					'value' => $request->session()->get('vrednost'),
+					'voting_id' => $last_votings_id
+				]);
+			}
+			else
+			{
+				DB::table('voting_success')->insert([
+					'relation' => $request->session()->get('relacija'),
+					'value' => $request->session()->get('vrednost'),
+					'voting_id' => $last_votings_id
 				]);
 			}
 
@@ -395,6 +465,10 @@ class InitiatorController extends Controller
 			$request->session()->forget('odg');
 			$request->session()->forget('glasaci');
 			$request->session()->forget('vise_odg');
+			$request->session()->forget('relacija');
+			$request->session()->forget('vrednost');
+			$request->session()->forget('criteriumRadios');
+			$request->session()->forget('opcija');
 
 			Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
 			Session::flash('count', '1');
@@ -411,7 +485,12 @@ class InitiatorController extends Controller
 			$request['glasaci'] = $request->session()->get('glasaci');
 			if ($request->session()->get('vise_odg'))
 				$request['vise_odg'] = true;
-			
+
+			$request['relacija'] = $request->session()->get('relacija');
+			$request['vrednost'] = $request->session()->get('vrednost');
+			$request['opcija'] = $request->session()->get('opcija');
+			$request['criteriumRadios'] = $request->session()->get('criteriumRadios');
+
 			$request->session()->forget('naslov');
 			$request->session()->forget('opis');
 			$request->session()->forget('vreme1');
@@ -419,7 +498,11 @@ class InitiatorController extends Controller
 			$request->session()->forget('odg');
 			$request->session()->forget('glasaci');
 			$request->session()->forget('vise_odg');
-			
+			$request->session()->forget('relacija');
+			$request->session()->forget('vrednost');
+			$request->session()->forget('criteriumRadios');
+			$request->session()->forget('opcija');
+
 			return redirect()->back()->withInput();
 		}	
 	}

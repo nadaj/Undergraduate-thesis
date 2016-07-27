@@ -5,6 +5,10 @@
     <br/>
     <?php $i = 0; ?>
     
+    @if ($votings->isEmpty())
+    <p>Nema aktuelnih glasanja.</p>
+    @endif
+    
     @foreach ($votings as $voting)
     @if ($i % 2 == 0)
     <div class="panel panel-primary">
