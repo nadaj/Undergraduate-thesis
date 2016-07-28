@@ -61,6 +61,13 @@ Route::get('/admin/home', [
     'as' => 'admin.home'
 ]);
 
+Route::post('/admin/changerole', [
+    'uses' => 'AdminController@changeRole',
+    'middleware' => 'roles',
+    'roles' => '1',
+    'as' => 'admin.changerole'
+]);
+
 Route::get('/initiator/home', [
     'uses' => 'InitiatorController@getInitiatorHome',
     'middleware' => 'roles',

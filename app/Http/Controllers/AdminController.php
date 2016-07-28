@@ -146,4 +146,14 @@ class AdminController extends Controller
 	        }
 		}
 	}
+
+	public function changeRole(Request $request)
+	{
+		if ($request->ajax())
+		{
+			User::where('email', '=', $request['user'])->update([
+				'role_id' => $request['role']
+			]);
+		}
+	}
 }

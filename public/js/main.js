@@ -13,9 +13,15 @@ $(document).ready(function() {
             data: {id: currentValue, _token: $('input[name="_token"]').val()},
             success: function(data){
                 if (isChecked)
+                {
                     obj.attr( "class", "active" );
+                    obj.find("[id^='changeRole']").removeAttr("disabled");
+                }
                 else
+                {
                     obj.attr( "class", "danger" );
+                    obj.find("[id^='changeRole']").attr("disabled", "disabled");
+                }
             },
             error: function(){},
         });
@@ -345,11 +351,19 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-    // $("#opcija").on('change', function() {
-    //     var obj = $(this);
-    //     var opcija = obj.val();
-
-    //     document.getElementById("opcija_skrivena").value = opcija;
-    // });
+    $("[id^='changeRole']").on('change', function() {
+        var role = $(this).val();
+        var user = $(this).closest('tr').find('td:eq(2)').text();
+        
+        $.ajax({
+            url: base_url + 'admin/changerole',
+            method: 'post',             
+            data: {role: role, user:user, _token: $('input[name="_token"]').val()},
+            success: function(data)
+            {   
+            },
+            error: function(){},
+        });
+    });  
 });
  

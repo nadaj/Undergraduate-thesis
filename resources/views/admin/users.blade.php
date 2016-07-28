@@ -29,21 +29,13 @@
 				    <td class="email">{{ $user->email }}</td>
 				    <td>{{ $user->title['name'] }}</td>
 				    <td>{{ $user->department['name'] }}</td>
-			    	@if ($user->role['id'] == 1)
 			    	<td>
-			    		Administrator
+			    		<select id="{{ 'changeRole'. $user->id}}" name="{{ 'changeRole'. $user->id}}" >
+			          		<option value="1" {{ (($user->role['id'] == 1)?"selected":"") }}>Administrator</option>
+			          		<option value="2" {{ (($user->role['id'] == 2)?"selected":"") }}>Inicijator</option>
+			          		<option value="3" {{ (($user->role['id'] == 3)?"selected":"") }}>Glasač</option>
+			        	</select>
 			    	</td>
-			    	@endif
-			    	@if ($user->role['id'] == 2)
-			    	<td>
-			    		Inicijator
-			    	</td>
-			    	@endif
-			    	@if ($user->role['id'] == 3)
-			    	<td>
-			    		Glasač
-			    	</td>
-			    	@endif
 				    <td>
 					    <div class="togglebutton">
 			              	<label>
@@ -59,21 +51,13 @@
 				    <td>{{ $user->email }}</td>
 				    <td>{{ $user->title['name'] }}</td>
 				    <td>{{ $user->department['name'] }}</td>
-			    	@if ($user->role['id'] == 1)
 			    	<td>
-			    		Administrator
+			    		<select id="{{ 'changeRole'. $user->id}}" name="{{ 'changeRole'. $user->id}}" disabled>
+			          		<option value="1" {{ (($user->role['id'] == 1)?"selected":"") }}>Administrator</option>
+			          		<option value="2" {{ (($user->role['id'] == 2)?"selected":"") }}>Inicijator</option>
+			          		<option value="3" {{ (($user->role['id'] == 3)?"selected":"") }}>Glasač</option>
+			        	</select>
 			    	</td>
-			    	@endif
-			    	@if ($user->role['id'] == 2)
-			    	<td>
-			    		Inicijator
-			    	</td>
-			    	@endif
-			    	@if ($user->role['id'] == 3)
-			    	<td>
-			    		Glasač
-			    	</td>
-			    	@endif
 				    <td>
 					    <div class="togglebutton">
 			              	<label>
