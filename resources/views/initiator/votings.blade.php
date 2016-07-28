@@ -83,6 +83,7 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
                   <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>
@@ -96,6 +97,7 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
+                  <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
                   <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>

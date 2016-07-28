@@ -56,6 +56,7 @@
                     <p><b>Opis: </b>{{ $voting->description }}</p>
                     <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                     <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                    <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                 </div>
             </div>
         </div>
@@ -67,6 +68,7 @@
                     <p><b>Opis: </b>{{ $voting->description }}</p>
                     <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                     <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                    <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                 </div>
             </div>
         </div>
