@@ -48,26 +48,6 @@
         </div>
         @endif
         <?php $i++; ?>
-        
-    <div class="modal fade" id="deletevotingmodal" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title">Brisanje glasanja</h4>
-                </div>
-
-                <div class="modal-body">
-                    <p>Da li ste sigurni da želite da obrišete glasanje?</p>
-                    <input type="hidden" name="voting_id" value="{{ $voting->id }}" />
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Odustanite</button>
-                    <button type="button" id="nastavi_sa_brisanjem" class="btn btn-primary">Obrišite</button>
-                </div>
-            </div>
-        </div>
-    </div>
     	@endforeach
         {!! $my_votings->render() !!}
     </div>
@@ -105,6 +85,27 @@
         </div>
         @endif
         <?php $j++; ?>
+        
+
+        <div class="modal fade" id="deletevotingmodal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">Brisanje glasanja</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Da li ste sigurni da želite da obrišete glasanje?</p>
+                        <input type="hidden" name="voting_id" value="{{ $voting->id }}" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Odustanite</button>
+                        <button type="button" id="nastavi_sa_brisanjem" class="btn btn-primary">Obrišite</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         @endforeach
         {!! $my_votings_past->render() !!}
     </div>

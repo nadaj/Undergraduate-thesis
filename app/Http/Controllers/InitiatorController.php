@@ -645,18 +645,23 @@ class InitiatorController extends Controller
 		if ($request->ajax())
 		{
 			$tickets = Ticket::where('votings_id', '=', $request['voting_id'])->get();
+
 			foreach ($tickets as $ticket) {
 				DB::table('answers_tickets')->where('tickets_id', '=', $ticket->id)
 										->delete();
 			}
 			
-			$tickets = Ticket::where('votings_id', '=', $request['voting_id'])
+			Ticket::where('votings_id', '=', $request['voting_id'])
 								->delete();
-			$answers = Answer::where('votings_id', '=', $request['voting_id'])
-								->delete();
-			$votings = Voting::where('id', '=', $request['voting_id'])
-						->delete();
 
+			DB::table('voting_success')->where('voting_id', '=', $request['voting_id'])
+								->delete();
+
+			Answer::where('votings_id', '=', $request['voting_id'])
+								->delete();
+			
+			Voting::where('id', '=', $request['voting_id'])
+						->delete();
 		}
 	}
 }

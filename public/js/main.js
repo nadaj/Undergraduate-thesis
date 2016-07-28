@@ -301,7 +301,7 @@ $(document).ready(function() {
                 window.location.replace(base_url + 'initiator/votings'); 
             },
             error: function(data){
-                
+                console.log(data);
             },
         });
     }); 
