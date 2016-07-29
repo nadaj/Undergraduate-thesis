@@ -32,8 +32,10 @@ class VoterController extends Controller
 			$duration_now = $start->from($datenow);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
-
-			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+			if ($duration_days === 0)
+				$progresses[$i] = 99;
+			else
+				$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 		}
 
 		return view('voter.home', compact('votings', 'progresses'));
@@ -84,8 +86,10 @@ class VoterController extends Controller
 		$duration_now = $start->from($datenow);
 		$duration_days = $duration->getDays();
 		$duration_now_days = $duration_now->getDays();
-
-		$progress = ($duration_now_days / $duration_days) * 100;
+		if ($duration_days === 0)
+			$progresses = 99;
+		else
+			$progress = ($duration_now_days / $duration_days) * 100;
 
 		return view('voter.voting', compact('voting', 'progress'));
 	}
