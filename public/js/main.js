@@ -286,9 +286,15 @@ $(document).ready(function() {
         t1.style.display = "none";
     });  
 
+    $("[id^='modaldeletebutton']").on('click', function(e){  
+        var obj = $(this);
+        var votingId = $(this).data('id');
+        $('#deletevotingmodal .modal-body').html(' <p>Da li ste sigurni da želite da obrišete glasanje?</p><input type="hidden" id="voting_id" name="voting_id" value="' + votingId + '" />') ;
+        e.preventDefault();
+    });
+      
     $('#nastavi_sa_brisanjem').on('click', function(e){  
         var obj = $(this);
-
         e.preventDefault();
         $.ajax({
             url: base_url + 'initiator/deletevoting',

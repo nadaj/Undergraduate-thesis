@@ -65,7 +65,7 @@
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
-                  <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
+                  <button id="modaldeletebutton{{ $voting->id }}" data-id="{{ $voting->id }}" data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
                   <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
-                  <button data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
+                  <button id="modaldeletebutton{{ $voting->id }}" data-id="{{ $voting->id }}" data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
                 </div>
             </div>
         </div>
@@ -96,8 +96,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <p>Da li ste sigurni da želite da obrišete glasanje?</p>
-                        <input type="hidden" name="voting_id" value="{{ $voting->id }}" />
+                       
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Odustanite</button>
