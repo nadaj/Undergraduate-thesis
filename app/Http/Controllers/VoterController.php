@@ -23,12 +23,13 @@ class VoterController extends Controller
 							->where('to', '>=', $datenow)
 							->get();
 
+		$datenow = str_replace(' ', 'T', $datenow);
 		// setting progresses for current votings
 		for($i = 0; $i < count($votings); $i++)
 		{
 			$start = new \Moment\Moment($votings[$i]->from);
 			$duration = $start->from($votings[$i]->to);
-			$duration_now = $start->fromNow();
+			$duration_now = $start->from($datenow);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
 
@@ -76,11 +77,11 @@ class VoterController extends Controller
 		{
 			return redirect('error')->with('fail', 'Nije validan zahtev!');
 		}
-		
+		$datenow = str_replace(' ', 'T', $datenow);
 		$voting = $voting[0];
 		$start = new \Moment\Moment($voting->from);
 		$duration = $start->from($voting->to);
-		$duration_now = $start->fromNow();
+		$duration_now = $start->from($datenow);
 		$duration_days = $duration->getDays();
 		$duration_now_days = $duration_now->getDays();
 

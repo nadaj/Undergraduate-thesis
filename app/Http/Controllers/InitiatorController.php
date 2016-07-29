@@ -30,12 +30,13 @@ class InitiatorController extends Controller
 		$temp_current = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)->get();
 
+		$date_now = str_replace(' ', 'T', $date_now);
 		// setting progresses for current votings
 		for($i = 0; $i < count($temp_current); $i++)
 		{
 			$start = new \Moment\Moment($temp_current[$i]->from);
 			$duration = $start->from($temp_current[$i]->to);
-			$duration_now = $start->fromNow();
+			$duration_now = $start->from($date_now);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
 
@@ -88,13 +89,13 @@ class InitiatorController extends Controller
 		$temp_past = Voting::where('initiator_id', '=', Auth::user()->id)
 							->where('to', '<', $date_now)
 							->get();
-
+		$date_now = str_replace(' ', 'T', $date_now);
 		// setting progresses and num of people that voted for current votings
 		for ($i = 0; $i < count($temp_current); $i++)
 		{
 			$start = new \Moment\Moment($temp_current[$i]->from);
 			$duration = $start->from($temp_current[$i]->to);
-			$duration_now = $start->fromNow();
+			$duration_now = $start->from($date_now);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
 
@@ -519,11 +520,11 @@ class InitiatorController extends Controller
 		{
 			return redirect('error')->with('fail', 'Nije validan zahtev!');
 		}
-		
+		$datenow = str_replace(' ', 'T', $datenow);
 		$voting = $voting[0];
 		$start = new \Moment\Moment($voting->from);
 		$duration = $start->from($voting->to);
-		$duration_now = $start->fromNow();
+		$duration_now = $start->from($datenow);
 		$duration_days = $duration->getDays();
 		$duration_now_days = $duration_now->getDays();
 
