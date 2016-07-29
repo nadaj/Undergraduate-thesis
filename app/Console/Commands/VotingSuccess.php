@@ -55,7 +55,7 @@ class VotingSuccess extends Command
             $success = 2;   //fail
             if ($voting_success->answer_id == null)     // number of people voted
             {
-                $num_voted = DB::table('tickets')->join('answers_tickets', 't.id', '=', 'answers_tickets.tickets_id')
+                $num_voted = DB::table('tickets')->join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
                                     ->select('answers_tickets.tickets_id')
                                     ->where('tickets.votings_id', '=', $voting->id)
                                     ->distinct()
