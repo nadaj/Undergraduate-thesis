@@ -39,10 +39,13 @@ class InitiatorController extends Controller
 			$duration_now = $start->from($date_now);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
+
 			if ($duration_days == 0)
-				$progresses[$i] = 99;
-			else
-				$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+			{
+				$duration_now_days = $duration_now->getMinutes();
+				$duration_days = $duration->getMinutes();
+			}
+			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 		}
 
 		return view('initiator.home', compact('votings', 'progresses'));
@@ -101,9 +104,11 @@ class InitiatorController extends Controller
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
 			if ($duration_days == 0)
-				$progresses[$i] = 99;
-			else
-				$progresses[$i] = ($duration_now_days / $duration_days) * 100;
+			{
+				$duration_now_days = $duration_now->getMinutes();
+				$duration_days = $duration->getMinutes();
+			}
+			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 
 			$num_to_vote = Ticket::where('votings_id', '=', $temp_current[$i]->id)->count();
 
@@ -532,9 +537,11 @@ class InitiatorController extends Controller
 		$duration_days = $duration->getDays();
 		$duration_now_days = $duration_now->getDays();
 		if ($duration_days == 0)
-			$progress = 99;
-		else
-			$progress = ($duration_now_days / $duration_days) * 100;
+		{
+			$duration_now_days = $duration_now->getMinutes();
+			$duration_days = $duration->getMinutes();
+		}
+		$progress = ($duration_now_days / $duration_days) * 100;
 		
 		return view('initiator.voting', compact('voting', 'progress'));
 	}
