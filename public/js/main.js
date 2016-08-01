@@ -91,7 +91,6 @@ $(document).ready(function() {
 
         if (obj.val() != 0)
         {
-            $("#zvanje").removeAttr("disabled");
             var katedra = obj.val();
 
             $.ajax({
@@ -109,34 +108,14 @@ $(document).ready(function() {
                         $('#zvanje').append($("<option></option>")
                             .attr("value", data[i].id)
                             .text(data[i].name)); 
-                    
                 },
                 error: function(){},
             });
-            $("#korisnik").attr( "disabled", "disabled" );
-            $("#korisnik").val("0");
-        }
-        else
-        {
-            $("#zvanje").attr( "disabled", "disabled" );
-            $("#zvanje").val("0");
-            $("#korisnik").attr( "disabled", "disabled" );
-            $("#korisnik").val("0");
-        }
-    });  
 
-    $('#zvanje').on('change', function() {
-        var obj = $(this);
-
-        if (obj.val() != 0)
-        {
-            $("#korisnik").removeAttr("disabled");
-            var zvanje = obj.val();
-            var katedra = $('#katedra').val();
             $.ajax({
-                url: base_url + 'initiator/getkorisnici',
+                url: base_url + 'initiator/getkorisnicik',
                 method: 'get',             
-                data: {zvanje: zvanje, katedra: katedra},
+                data: {katedra: katedra},
                 success: function(data)
                 {
                     $('#korisnik').empty();
@@ -146,18 +125,67 @@ $(document).ready(function() {
 
                     for (var i = 0; i < data.length; i++)
                         $('#korisnik').append($("<option></option>")
-                            .attr("value", data[i].id)
-                            .text(data[i].email)); 
-                    
+                            .attr("value", data[i].email)
+                            .text(data[i].email));
                 },
                 error: function(){},
             });
         }
-        else
+    });  
+
+    $('#zvanje').on('change', function() {
+        var obj = $(this);
+
+        if (obj.val() != 0)
         {
-            $("#korisnik").attr("disabled", "disabled");
-            $("#korisnik").val("0");
+            var zvanje = obj.val();
+            var katedra = $('#katedra').val();
+
+            if (katedra != 0)
+            {
+                $.ajax({
+                    url: base_url + 'initiator/getkorisnici',
+                    method: 'get',             
+                    data: {zvanje: zvanje, katedra: katedra},
+                    success: function(data)
+                    {
+                        $('#korisnik').empty();
+                        $('#korisnik').append($("<option></option>")
+                        .attr("value", 0)
+                        .text("Odaberite korisnika:")); 
+
+                        for (var i = 0; i < data.length; i++)
+                            $('#korisnik').append($("<option></option>")
+                                .attr("value", data[i].id)
+                                .text(data[i].email)); 
+                    },
+                    error: function(){},
+                });
+            }
+            else
+            {
+                $.ajax({
+                url: base_url + 'initiator/getkorisniciz',
+                method: 'get',             
+                data: {zvanje: zvanje},
+                success: function(data)
+                {
+                    $('#korisnik').empty();
+                    $('#korisnik').append($("<option></option>")
+                    .attr("value", 0)
+                    .text("Odaberite korisnika:")); 
+
+                    for (var i = 0; i < data.length; i++)
+                        $('#korisnik').append($("<option></option>")
+                            .attr("value", data[i].email)
+                            .text(data[i].email)); 
+                },
+                error: function(){},
+            });
+            }
+            
         }
+
     });  
 
     $('#add_user').on('click', function(e){  
@@ -494,6 +522,22 @@ $(document).ready(function() {
             },
             error: function(){},
         });
-    });  
+    }); 
+
+    $("#vise_odg").on('change', function(e) {
+        if (document.getElementById('vise_odg').checked)
+        {
+            document.getElementById("minimum").value = 1;
+            document.getElementById("maximum").value = $('#tableanswers tr').length - 1;
+            document.getElementById("min").style.display = "block";
+            document.getElementById("max").style.display = "block";
+        }
+        else
+        {
+            document.getElementById("min").style.display = "none";
+            document.getElementById("max").style.display = "none";
+        }
+        e.preventDefault();
+    }); 
 });
  

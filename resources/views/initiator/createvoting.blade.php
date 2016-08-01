@@ -133,15 +133,42 @@
     </div>
 
     <div class="row">
-        <div class="col-md-7 checkbox">
-          <label>
+        <div class="col-md-3 checkbox">
+            <label>
             @if (old('vise_odg'))
-                <input type="checkbox" name="vise_odg" checked>  Može se odabrati više odgovora
+                <input type="checkbox" id="vise_odg" name="vise_odg" checked>  Može se odabrati više odgovora
             @else
-                <input type="checkbox" name="vise_odg">  Može se odabrati više odgovora
+                <input type="checkbox" id="vise_odg" name="vise_odg">  Može se odabrati više odgovora
             @endif
-          </label>
-      </div>
+            </label>
+        </div>
+        @if (old('vise_odg'))
+        <div id="min" class="col-md-1 col-sm-2 col-xs-4">
+            <div class="form-group" style="margin-top:0px">
+                <label for="minimum" class="control-label" style="margin-top:0px">Minimum:</label>
+                <input type="text" class="form-control" id="minimum" name="minimum" value="{{ old('minimum') }}" >
+            </div>
+        </div>
+        <div id="max" class="col-md-1 col-sm-2 col-xs-4">
+            <div class="form-group" style="margin-top:0px">
+                <label for="maximum" class="control-label" style="margin-top:0px">Maksimum:</label>
+                <input type="text" class="form-control" id="maximum" name="maximum" value="{{ old('maximum') }}" >
+            </div>
+        </div>
+        @else
+        <div id="min" class="col-md-1 col-sm-2 col-xs-4" style="display:none">
+            <div class="form-group" style="margin-top:0px">
+                <label for="minimum" class="control-label" style="margin-top:0px">Minimum:</label>
+                <input type="text" class="form-control" id="minimum" name="minimum" value="{{ old('minimum') }}" >
+            </div>
+        </div>
+        <div id="max" class="col-md-1 col-sm-2 col-xs-4" style="display:none">
+            <div class="form-group" style="margin-top:0px">
+                <label for="maximum" class="control-label" style="margin-top:0px">Maksimum:</label>
+                <input type="text" class="form-control" id="maximum" name="maximum" value="{{ old('maximum') }}" >
+            </div>
+        </div>
+        @endif
     </div>
 
 
@@ -216,7 +243,7 @@
             <select name="katedra" id="katedra" class="form-control">
                 <option value="0">Odaberite katedru:</option>
                 @foreach ($katedre as $katedra)
-                <option value="{{ $katedra->id }}">{{ $katedra->name}}</option>
+                <option value="{{ $katedra->id }}">{{ $katedra->name }}</option>
                 @endforeach
             </select>
         </div>
@@ -224,13 +251,16 @@
             <select name="zvanje" id="zvanje" class="form-control">
                 <option value="0">Odaberite zvanje:</option>
                 @foreach ($zvanja as $zvanje)
-                <option value="{{ $zvanje->id }}">{{ $zvanje->name}}</option>
+                <option value="{{ $zvanje->id }}">{{ $zvanje->name }}</option>
                 @endforeach
             </select>
         </div>
         <div class="form-group col-md-3 col-sm-3" style="margin-top:0px">
-            <select name="korisnik" id="korisnik" class="form-control" disabled>
+            <select name="korisnik" id="korisnik" class="form-control">
                 <option value="0">Odaberite korisnika:</option>
+                @foreach ($korisnici as $korisnik)
+                <option value="{{ $korisnik->email }}">{{ $korisnik->email }}</option>
+                @endforeach
             </select>
         </div>
         <div class="col-md-3 col-sm-3">

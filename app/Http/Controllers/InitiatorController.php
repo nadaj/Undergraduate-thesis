@@ -149,7 +149,10 @@ class InitiatorController extends Controller
 	{
 		$katedre = Department::all();
 		$zvanja = Title::all();
-		return view('initiator.createvoting', compact('katedre', 'zvanja'));
+		$korisnici = User::whereRaw('active = 1 and confirmed = 1')
+						 ->where('title_id', '!=', null)
+						 ->get();
+		return view('initiator.createvoting', compact('katedre', 'zvanja', 'korisnici'));
 	}
 
 	public function createVoting(Request $request)
@@ -193,12 +196,34 @@ class InitiatorController extends Controller
 	    if ($request['criteriumRadios'] && $request['criteriumRadios'] === "2")
 	    {
 	    	if ($request['opcija'] === "0")
+	    	{
 	    		$rules['opcija'] = 'required|different:0';
+	    	}
 	    	else if (!in_array($request['opcija'], $request['odg']))
-					$rules['opcija_odg'] = 'required';
+			{
+				$rules['opcija_odg'] = 'required';
+			}
 	    }
 	    else
+	    {
 	    	$rules['opcija'] = 'required';
+	    }
+
+	    if ($request['vise_odg'])
+	    {
+	    	if ($request['minimum'] < 1 || $request['minimum'] > count($request['odg']))
+	    	{
+	    		$rules['minimum'] = 'array';
+	    	}
+	    	if ($request['maximum'] >  count($request['odg']))
+	    	{
+	    		$rules['maximum'] = 'array';
+	    	}
+	    	if ($request['minimum'] > $request['maximum'])
+	    	{
+	    		$rules['min_max'] = 'required';
+	    	}
+	    }
 
 		$this->validate($request, $rules);
 
@@ -211,6 +236,8 @@ class InitiatorController extends Controller
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
 			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
+			    'min' => $request['minimum'],
+			    'max' => $request['maximum'],
 			    'initiator_id' => Auth::user()->id
 			]);
 
@@ -311,9 +338,10 @@ class InitiatorController extends Controller
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
 			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
+			    'min' => $request['minimum'],
+			    'max' => $request['maximum'],
 			    'initiator_id' => Auth::user()->id
 			]);
-
 			$i = 0;
 
 			foreach ($request['odg'] as $odgovor)
@@ -336,6 +364,8 @@ class InitiatorController extends Controller
 			$request->session()->put('vrednost', $request['vrednost']);
 			$request->session()->put('criteriumRadios', $request['criteriumRadios']);
 			$request->session()->put('opcija', $request['opcija']);
+			$request->session()->put('minimum', $request['minimum']);
+			$request->session()->put('maximum', $request['maximum']);
 
 			$relacija = $request['relacija'];
 			$vrednost = $request['vrednost'];
@@ -409,6 +439,8 @@ class InitiatorController extends Controller
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme1'))), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme2'))), 
 			    'multiple_answers' => $request->session()->get('vise_odg'),
+			    'min' => $request->session()->get('minimum'),
+			    'max' => $request->session()->get('maximum'),
 			    'initiator_id' => Auth::user()->id
 			]);
 
@@ -508,6 +540,8 @@ class InitiatorController extends Controller
 			$request->session()->forget('vrednost');
 			$request->session()->forget('criteriumRadios');
 			$request->session()->forget('opcija');
+			$request->session()->forget('minimum');
+			$request->session()->forget('maximum');
 
 			Session::flash('vote_success', 'Uspešno je kreirano glasanje.');
 			Session::flash('count', '1');
@@ -529,6 +563,8 @@ class InitiatorController extends Controller
 			$request['vrednost'] = $request->session()->get('vrednost');
 			$request['opcija'] = $request->session()->get('opcija');
 			$request['criteriumRadios'] = $request->session()->get('criteriumRadios');
+			$request['minimum'] = $request->session()->get('minimum');
+			$request['maximum'] = $request->session()->get('maximum');
 
 			$request->session()->forget('naslov');
 			$request->session()->forget('opis');
@@ -541,6 +577,8 @@ class InitiatorController extends Controller
 			$request->session()->forget('vrednost');
 			$request->session()->forget('criteriumRadios');
 			$request->session()->forget('opcija');
+			$request->session()->forget('minimum');
+			$request->session()->forget('maximum');
 
 			return redirect()->back()->withInput();
 		}	

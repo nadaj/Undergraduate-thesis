@@ -17,7 +17,7 @@
                 <p>
                     <b>Može se odabrati više odgovora:</b> 
                     @if ($more_ans)
-                    Da
+                    Da [{{ $voting->min }} - {{ $voting->max }}]
                     @else
                     Ne
                     @endif

@@ -178,6 +178,15 @@ return [
         'opcija_odg' => [
             'required' => 'Ne postoji unet takav odgovor za kriterijum!',
         ],
+        'min_max' => [
+            'required' => 'Minimum nije manji od maksimuma!',
+        ],
+        'minimum' => [
+            'array' => 'Minimum mora da bude veći od 0 i manji ili jednak broju odgovora!',
+        ],
+        'maximum' => [
+            'array' => 'Maksimum mora da bude manji ili jednak broju odgovora!',
+        ],
     ],
 
     /*
