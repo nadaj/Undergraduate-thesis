@@ -5,10 +5,12 @@
     <form class="form-horizontal" method="post" action="{{ route('voter.vote') }}">
         <fieldset>
             <center>    
-                <legend>{{ $voting->name }}</legend>
-                <!-- <div class="col-md-offset-1 ">
-                    {{ $voting->description }}
-                </div> -->
+                <legend style="margin-bottom:5px">{{ $voting->name }}</legend>
+                @if ($voting->multiple_answers)
+                <div style="margin-bottom:15px">
+                    Broj odgovora mora biti u opsegu: {{ $voting->min }} - {{ $voting->max }}.
+                </div>
+                @endif
                 <div class="form-group" style="margin-top: 0; display:inline-block; text-align: left">
                     @if (! $voting->multiple_answers)
                         @foreach ($answers as $answer)

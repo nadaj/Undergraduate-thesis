@@ -158,6 +158,7 @@ return [
         ],
         'optionsCheckbox' => [
             'required' => 'Niste uneli odgovor!',
+            'between' => 'Broj odgovora nije u dozvoljenom opsegu!'
         ],
         'relacija' => [
             'required' => 'Niste uneli relaciju!',

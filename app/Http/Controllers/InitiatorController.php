@@ -682,8 +682,11 @@ class InitiatorController extends Controller
 		}
 		else
 		{
+			$ticket = Ticket::where('id', '=', $request['ticket'])->get()->first();
+			$voting = Voting::where('id', '=', $ticket->votings_id)->get()->first();
+			
 			$this->validate($request, [
-				'optionsCheckbox' => 'required'
+				'optionsCheckbox' => 'required|between:' . $voting->min . ',' . $voting->max
 	        ]);
 
 	        $answered = DB::table('answers_tickets')->where('tickets_id', '=', $request['ticket'])
