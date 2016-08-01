@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use SendGrid;
 use Carbon\Carbon;
 use App\Voting;
+use DB;
 
 class VotingReminder extends Command
 {
@@ -46,31 +47,35 @@ class VotingReminder extends Command
 
         foreach ($votings as $voting) 
         {
-            $sendgrid = new SendGrid('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');
-            $email = new SendGrid\Email();
-       
-            $m = "<p>Glasanje - " . $voting->name . " se završava " 
-            . date('d-m-Y H:i:s', $voting->to) 
-            . ".</p>";
-       
-            $email
-                ->addTo($glasac)
-                ->setFrom('votingsystemetf@gmail.com')
-                ->setSubject('e-Glasanje: Podsetnik za ' . $voting->name)
-                ->setHtml($m)
-            ;
+            $voters = DB::table('voters_votings')->where('votings_id', '=', $voting->id)->get();
 
-            try {
-                $sendgrid->send($email);
+            foreach ($voters as $glasac) {
+                $sendgrid = new SendGrid('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');
+                $email = new SendGrid\Email();
+           
+                $m = "<p>Glasanje - " . $voting->name . " se završava " 
+                . date('d-m-Y H:i:s', $voting->to) 
+                . ".</p>";
+           
+                $email
+                    ->addTo($glasac)
+                    ->setFrom('votingsystemetf@gmail.com')
+                    ->setSubject('e-Glasanje: Podsetnik za ' . $voting->name)
+                    ->setHtml($m)
+                ;
 
-            } catch(\SendGrid\Exception $e) {
-                echo $e->getCode();
-                foreach($e->getErrors() as $er) {
-                    echo $er;
-                }
-            }  
-            Voting::where('id', '=', $voting->id)
-                    ->update(array('reminder_time' => null)); 
+                try {
+                    $sendgrid->send($email);
+
+                } catch(\SendGrid\Exception $e) {
+                    echo $e->getCode();
+                    foreach($e->getErrors() as $er) {
+                        echo $er;
+                    }
+                }  
+                Voting::where('id', '=', $voting->id)->update(array('reminder_time' => null)); 
+            }
+            
         }
     }
 }

@@ -325,6 +325,7 @@ class ComposerStaticInita243e8085ddf5fb2890f62e8edfade04
         'CreateTicketsTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_30_151527_create_tickets_table.php',
         'CreateTitlesTable' => __DIR__ . '/../..' . '/database/migrations/2016_04_29_185712_create_titles_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2016_05_01_171128_create_users_table.php',
+        'CreateVotersVotingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_08_01_203407_create_voters_votings_table.php',
         'CreateVotingSuccessTable' => __DIR__ . '/../..' . '/database/migrations/2016_07_26_095622_create_voting_success_table.php',
         'CreateVotingsTable' => __DIR__ . '/../..' . '/database/migrations/2016_06_30_145516_create_votings_table.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',

@@ -21,14 +21,21 @@ class VoterController extends Controller
 		$datenow = Carbon::now();
 		$votings = Voting::where('from', '<=', $datenow)
 							->where('to', '>=', $datenow)
+							->simplePaginate(5, ['*'], 'page_current');		
+		$temp_current = Voting::where('from', '<=', $datenow)
+						->where('to', '>=', $datenow)->get();
+		$votings_past = Voting::where('to', '<', $datenow)
+							->simplePaginate(5, ['*'], 'page_past');
+		$temp_past = Voting::where('to', '<', $datenow)
 							->get();
 
 		$datenow = str_replace(' ', 'T', $datenow);
+
 		// setting progresses for current votings
-		for($i = 0; $i < count($votings); $i++)
+		for($i = 0; $i < count($temp_current); $i++)
 		{
-			$start = new \Moment\Moment($votings[$i]->from);
-			$duration = $start->from($votings[$i]->to);
+			$start = new \Moment\Moment($temp_current[$i]->from);
+			$duration = $start->from($temp_current[$i]->to);
 			$duration_now = $start->from($datenow);
 			$duration_days = $duration->getDays();
 			$duration_now_days = $duration_now->getDays();
@@ -40,7 +47,37 @@ class VoterController extends Controller
 			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 		}
 
-		return view('voter.home', compact('votings', 'progresses'));
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
+			$past_answers[$i] = '';
+			$num_voters = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			foreach ($answers as $answer) 
+			{
+				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
+
+				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_past[$i]->id)
+						->where('answers_tickets.answers_id', '=', $answer->id)
+						->distinct()
+						->count();
+				$percentage_ans = ($num_voted / $num_voters) * 100;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $percentage_ans . "%)"
+				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+			}
+			$past_answers[$i] = nl2br($past_answers[$i]);
+		}
+
+		$past_successes = array();
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$temp = DB::table('voting_success')->where('voting_id', '=', $temp_past[$i]->id)
+															->get();
+			$past_successes[$i] = $temp[0];
+		}
+
+		return view('voter.home', compact('votings', 'progresses', 'votings_past',
+									'past_answers', 'past_successes'));
 	}
 
 	public function getChangePassword()

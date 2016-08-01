@@ -29,6 +29,10 @@ class InitiatorController extends Controller
 						->simplePaginate(5, ['*'], 'page_current');		
 		$temp_current = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)->get();
+		$votings_past = Voting::where('to', '<', $date_now)
+							->simplePaginate(5, ['*'], 'page_past');
+		$temp_past = Voting::where('to', '<', $date_now)
+							->get();	
 
 		$date_now = str_replace(' ', 'T', $date_now);
 		// setting progresses for current votings
@@ -48,7 +52,37 @@ class InitiatorController extends Controller
 			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 		}
 
-		return view('initiator.home', compact('votings', 'progresses'));
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
+			$past_answers[$i] = '';
+			$num_voters = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			foreach ($answers as $answer) 
+			{
+				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
+
+				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_past[$i]->id)
+						->where('answers_tickets.answers_id', '=', $answer->id)
+						->distinct()
+						->count();
+				$percentage_ans = ($num_voted / $num_voters) * 100;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $percentage_ans . "%)"
+				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+			}
+			$past_answers[$i] = nl2br($past_answers[$i]);
+		}
+
+		$past_successes = array();
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$temp = DB::table('voting_success')->where('voting_id', '=', $temp_past[$i]->id)
+															->get();
+			$past_successes[$i] = $temp[0];
+		}
+		
+		return view('initiator.home', compact('votings', 'progresses', 'votings_past',
+									'past_answers', 'past_successes'));
 	}
 
 	public function getChangePassword()
@@ -135,8 +169,8 @@ class InitiatorController extends Controller
 						->where('answers_tickets.answers_id', '=', $answer->id)
 						->distinct()
 						->count();
-				$procentage_ans = ($num_voted / $num_voters) * 100;
-				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $procentage_ans . "%)"
+				$percentage_ans = ($num_voted / $num_voters) * 100;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $percentage_ans . "%)"
 				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
 			}
 			$past_answers[$i] = nl2br($past_answers[$i]);
@@ -310,6 +344,13 @@ class InitiatorController extends Controller
 				DB::table('tickets')->insert([
 					'votings_id' => $last_votings_id,
 	        		'nonce' => $nonce
+				]);
+
+				$g = DB::table('users')->where('email', '=', $glasac)->get();
+
+				DB::table('voters_votings')->insert([
+					'votings_id' => $last_votings_id,
+	        		'users_id' => $g[0]->id
 				]);
 
 				$sendgrid = new SendGrid('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');
@@ -529,6 +570,13 @@ class InitiatorController extends Controller
 				DB::table('tickets')->insert([
 					'votings_id' => $last_votings_id,
 	        		'nonce' => $nonce
+				]);
+
+				$g = DB::table('users')->where('email', '=', $glasac)->get();
+
+				DB::table('voters_votings')->insert([
+					'votings_id' => $last_votings_id,
+	        		'users_id' => $g[0]->id
 				]);
 
 				$sendgrid = new SendGrid('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');
@@ -788,6 +836,9 @@ class InitiatorController extends Controller
 			Answer::where('votings_id', '=', $request['voting_id'])
 								->delete();
 			
+			DB::table('voters_votings')->where('votings_id', '=', $request['voting_id'])
+								->delete();
+
 			Voting::where('id', '=', $request['voting_id'])
 						->delete();
 		}
