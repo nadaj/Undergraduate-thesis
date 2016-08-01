@@ -45,6 +45,7 @@ class VotingSuccess extends Command
         $votings = Voting::where('to', '<', $date_now)
                             ->where('status', '=', 0)
                             ->get();
+                            
         foreach ($votings as $voting) 
         {
             // get criterium and check if it's true

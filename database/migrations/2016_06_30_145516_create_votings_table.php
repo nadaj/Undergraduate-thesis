@@ -18,7 +18,9 @@ class CreateVotingsTable extends Migration
             $table->text('description');
             $table->dateTime('from');
             $table->dateTime('to');
+            $table->dateTime('reminder_time')->nullable();
             $table->boolean('multiple_answers');
+            $table->boolean('show_voters')->default(false);
             $table->integer('min')->default(0);
             $table->integer('max')->default(0);
             $table->integer('status')->default(0);  // 0 - not finished, 1 - success, 2 - failure

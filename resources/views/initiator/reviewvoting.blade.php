@@ -10,6 +10,9 @@
                 <p><b>Opis: </b>{{ $voting->description }}</p>
                 <p><b>Vreme početka:</b> {{ $voting->from }}</p>
                 <p><b>Vreme završetka:</b> {{ $voting->to }}</p>
+                @if ($voting->reminder_time)
+                <p><b>Vreme podsetnika:</b> {{ $voting->reminder_time }}</p>
+                @endif
                 <p><b>Odgovori:</b></p>
                 @foreach($answers as $answer)
                     <p>{{ $answer->answer }}</p>
@@ -28,6 +31,14 @@
                         Broj glasača je {{ $relacija }} {{ $vrednost }}
                     @else
                         Broj glasova za odgovor <i>{{ $opcija }}</i> je {{ $relacija }} {{ $vrednost }}
+                    @endif
+                </p>
+                <p>
+                    <b>Prikazati rezultate glasačima nakon glasanja:</b> 
+                    @if ($post_rez)
+                    Da 
+                    @else
+                    Ne
                     @endif
                 </p>
                 <p><b>Glasači:</b></p>

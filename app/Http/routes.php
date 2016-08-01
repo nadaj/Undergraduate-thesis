@@ -305,3 +305,10 @@ Route::get('/initiator/getkorisnicik', [
     'roles' => '2',
     'as' => 'initiator.getkorisnicik'
 ]);
+
+Route::get('/initiator/getsvazvanja', [
+    'uses' => 'InitiatorController@getsvaZvanja',
+    'middleware' => 'roles',
+    'roles' => '2',
+    'as' => 'initiator.getsvazvanja'
+]);

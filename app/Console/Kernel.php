@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         // Commands\Inspire::class,
         Commands\VotingSuccess::class,
+        Commands\VotingReminder::class,
     ];
 
     /**
@@ -26,5 +27,6 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('voting:success')->everyMinute();
+        $schedule->command('voting:reminder')->everyMinute();
     }
 }

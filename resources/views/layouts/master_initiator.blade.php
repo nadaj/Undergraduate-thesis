@@ -43,6 +43,7 @@
 		  $(function () {
                 $('#datetimepicker4').datetimepicker();
                 $('#datetimepicker2').datetimepicker();
+                $('#datetimepicker3').datetimepicker();
             });
 		</script>
 		<script type="text/javascript" src="../../js/main.js"></script>

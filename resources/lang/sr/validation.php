@@ -141,6 +141,10 @@ return [
             'required' => 'Niste uneli vreme završetka!',
             'after' => 'Vreme završetka nije posle vremena početka!',
         ],
+        'vreme3' => [
+            'after' => 'Vreme podsetnika nije posle vremena početka!',
+            'before' => 'Vreme podsetnika nije pre vremena završetka!',
+        ],
         'odgovori' => [
             'required' => 'Potrebno je uneti bar 2 odgovora!',
             'min' => 'Potrebno je uneti bar 2 odgovora!',

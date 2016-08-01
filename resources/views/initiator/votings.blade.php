@@ -63,6 +63,13 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
+                  <p><b>Kriterijum uspešnosti glasanja:</b>
+                    @if ($past_successes[$j]->answer_id)
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer_id }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @else
+                        Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @endif
+                  </p>
                   <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
                   <button id="modaldeletebutton{{ $voting->id }}" data-id="{{ $voting->id }}" data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>
@@ -77,6 +84,13 @@
                   <p><b>Opis: </b>{{ $voting->description }}</p>
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
+                  <p><b>Kriterijum uspešnosti glasanja:</b>
+                    @if ($past_successes[$j]->answer_id)
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer_id }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @else
+                        Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @endif
+                  </p>
                   <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
                   <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p>
                   <button id="modaldeletebutton{{ $voting->id }}" data-id="{{ $voting->id }}" data-toggle="modal" data-target="#deletevotingmodal" class="btn btn-danger btn-lg btn-block btn-raised"><i class="material-icons">delete</i></button>

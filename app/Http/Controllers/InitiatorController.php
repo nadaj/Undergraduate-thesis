@@ -126,7 +126,7 @@ class InitiatorController extends Controller
 		{
 			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
 			$past_answers[$i] = '';
-			//$num_to_vote = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			$num_voters = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
 			foreach ($answers as $answer) {
 				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
 
@@ -135,14 +135,23 @@ class InitiatorController extends Controller
 						->where('answers_tickets.answers_id', '=', $answer->id)
 						->distinct()
 						->count();
-
-				$past_answers[$i] = $past_answers[$i] . $num_voted . "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+				$procentage_ans = ($num_voted / $num_voters) * 100;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $procentage_ans . "%)"
+				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
 			}
 			$past_answers[$i] = nl2br($past_answers[$i]);
 		}
 
+		$past_successes = array();
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$temp = DB::table('voting_success')->where('voting_id', '=', $temp_past[$i]->id)
+															->get();
+			$past_successes[$i] = $temp[0];
+		}
+
 		return view('initiator.votings', compact('my_votings', 'progresses', 'my_votings_past'
-			, 'proc', 'past_answers'));
+			, 'proc', 'past_answers', 'past_successes'));
 	}
 
 	public function getCreateVoting()
@@ -158,7 +167,7 @@ class InitiatorController extends Controller
 	public function createVoting(Request $request)
 	{
 		$datenow = Carbon::now();
-		
+
 		Session::forget('vote_success');
 		$rules = [
 			'naslov' => 'required|max:100|unique:votings,name',
@@ -225,6 +234,11 @@ class InitiatorController extends Controller
 	    	}
 	    }
 
+	    if ($request['vreme3'] !== "")
+	    {
+	    	$rules['vreme3'] = 'required:date|after:vreme1|before:vreme2';
+	    }
+
 		$this->validate($request, $rules);
 
 		if ($request['pokreni'] === "")
@@ -235,7 +249,9 @@ class InitiatorController extends Controller
 			    'description' => $request['opis'], 
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
+			    'reminder_time' => ($request['vreme3'] === "")? null: date( 'Y-m-d H:i:s', strtotime($request['vreme3'])),
 			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
+			    'show_voters' => array_key_exists('post_rezultati', $request->all()),
 			    'min' => $request['minimum'],
 			    'max' => $request['maximum'],
 			    'initiator_id' => Auth::user()->id
@@ -337,11 +353,14 @@ class InitiatorController extends Controller
 			    'description' => $request['opis'], 
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request['vreme1'])), 
 			    'to' => date( 'Y-m-d H:i:s', strtotime($request['vreme2'])), 
+			    'reminder_time' => ($request['vreme3'] === "")? null: date( 'Y-m-d H:i:s', strtotime($request['vreme3'])),
 			    'multiple_answers' => array_key_exists('vise_odg', $request->all()),
+			    'show_voters' => array_key_exists('post_rezultati', $request->all()),
 			    'min' => $request['minimum'],
 			    'max' => $request['maximum'],
 			    'initiator_id' => Auth::user()->id
 			]);
+
 			$i = 0;
 
 			foreach ($request['odg'] as $odgovor)
@@ -353,13 +372,17 @@ class InitiatorController extends Controller
 
 			$voters = $request['glasaci'];
 			$more_ans = array_key_exists('vise_odg', $request->all());
+			$post_rez = array_key_exists('post_rezultati', $request->all());
+
 			$request->session()->put('naslov', $request['naslov']);
 			$request->session()->put('opis', $request['opis']);
 			$request->session()->put('vreme1', $request['vreme1']);
 			$request->session()->put('vreme2', $request['vreme2']);
+			$request->session()->put('vreme3', $request['vreme3']);
 			$request->session()->put('odg', $request['odg']);
 			$request->session()->put('glasaci', $request['glasaci']);
 			$request->session()->put('vise_odg', array_key_exists('vise_odg', $request->all()));
+			$request->session()->put('post_rezultati', array_key_exists('post_rezultati', $request->all()));
 			$request->session()->put('relacija', $request['relacija']);
 			$request->session()->put('vrednost', $request['vrednost']);
 			$request->session()->put('criteriumRadios', $request['criteriumRadios']);
@@ -373,7 +396,7 @@ class InitiatorController extends Controller
 			$criteriumRadios = $request['criteriumRadios'];
 
 			return view('initiator.reviewvoting', compact('answers', 'voting', 'voters',
-			 'more_ans', 'relacija', 'vrednost', 'opcija', 'criteriumRadios'));
+			 'more_ans', 'relacija', 'vrednost', 'opcija', 'criteriumRadios', 'post_rez'));
 		}
 		
 	}
@@ -387,6 +410,12 @@ class InitiatorController extends Controller
 						->distinct()
 						->get();
 
+		return $zvanja;
+	}
+
+	public function getsvaZvanja(Request $request)
+	{
+		$zvanja = Title::all();
 		return $zvanja;
 	}
 
@@ -437,8 +466,10 @@ class InitiatorController extends Controller
 				'name' => $request->session()->get('naslov'), 
 			    'description' => $request->session()->get('opis'), 
 			    'from' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme1'))), 
-			    'to' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme2'))), 
+			    'to' => date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme2'))),
+			    'reminder_time' => ($request->session()->get('vreme3') === "")? null: date( 'Y-m-d H:i:s', strtotime($request->session()->get('vreme3'))),  
 			    'multiple_answers' => $request->session()->get('vise_odg'),
+			    'show_voters' => $request->session()->get('post_rezultati'),
 			    'min' => $request->session()->get('minimum'),
 			    'max' => $request->session()->get('maximum'),
 			    'initiator_id' => Auth::user()->id
@@ -533,9 +564,11 @@ class InitiatorController extends Controller
 			$request->session()->forget('opis');
 			$request->session()->forget('vreme1');
 			$request->session()->forget('vreme2');
+			$request->session()->forget('vreme3');
 			$request->session()->forget('odg');
 			$request->session()->forget('glasaci');
 			$request->session()->forget('vise_odg');
+			$request->session()->forget('post_rezultati');
 			$request->session()->forget('relacija');
 			$request->session()->forget('vrednost');
 			$request->session()->forget('criteriumRadios');
@@ -554,10 +587,19 @@ class InitiatorController extends Controller
 			$request['opis'] = $request->session()->get('opis');
 			$request['vreme1'] = $request->session()->get('vreme1');
 			$request['vreme2'] = $request->session()->get('vreme2');
+			$request['vreme3'] = $request->session()->get('vreme3');
 			$request['odg'] = $request->session()->get('odg');
 			$request['glasaci'] = $request->session()->get('glasaci');
+
 			if ($request->session()->get('vise_odg'))
+			{
 				$request['vise_odg'] = true;
+			}
+
+			if ($request->session()->get('post_rezultati'))
+			{
+				$request['post_rezultati'] = true;
+			}
 
 			$request['relacija'] = $request->session()->get('relacija');
 			$request['vrednost'] = $request->session()->get('vrednost');
@@ -570,9 +612,11 @@ class InitiatorController extends Controller
 			$request->session()->forget('opis');
 			$request->session()->forget('vreme1');
 			$request->session()->forget('vreme2');
+			$request->session()->forget('vreme3');
 			$request->session()->forget('odg');
 			$request->session()->forget('glasaci');
 			$request->session()->forget('vise_odg');
+			$request->session()->forget('post_rezultati');
 			$request->session()->forget('relacija');
 			$request->session()->forget('vrednost');
 			$request->session()->forget('criteriumRadios');

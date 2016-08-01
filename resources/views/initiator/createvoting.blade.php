@@ -50,6 +50,20 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class='col-md-6'>
+            <div class="form-group">
+                <div class='input-group date' id='datetimepicker3'>
+                  <label for="vreme3" class="control-label">Datum i vreme podsetnika (opciono):</label>
+                    <input name="vreme3" type='text' class="form-control" value="{{ old('vreme3') }}" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row" style="margin-top:28px">
         <div class="col-md-7">
             <table class="footable table table-striped" id="tableanswers">
@@ -231,6 +245,18 @@
         <div class="form-group label-floating col-md-3 col-sm-3" style="margin-top:0px">
             <label for="vrednost" class="control-label" style="color:#555555">Unesite vrednost:</label>
             <input type="text" class="form-control" id="vrednost" name="vrednost" value="{{ old('vrednost') }}" >
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7 checkbox" style="margin-top:15px">
+            <label>
+            @if (old('post_rezultati'))
+                <input type="checkbox" id="post_rezultati" name="post_rezultati" checked>  Prikazuju se rezultati glasanja glasačima nakon završetka
+            @else
+                <input type="checkbox" id="post_rezultati" name="post_rezultati">  Prikazuju se rezultati glasanja glasačima nakon završetka
+            @endif
+            </label>
         </div>
     </div>
 

@@ -131,6 +131,27 @@ $(document).ready(function() {
                 error: function(){},
             });
         }
+        else
+        {
+            $.ajax({
+                url: base_url + 'initiator/getsvazvanja',
+                method: 'get',             
+                data: {},
+                success: function(data)
+                {
+                    $('#zvanje').empty();
+                    $('#zvanje').append($("<option></option>")
+                    .attr("value", 0)
+                    .text("Odaberite zvanje:")); 
+
+                    for (var i = 0; i < data.length; i++)
+                        $('#zvanje').append($("<option></option>")
+                            .attr("value", data[i].id)
+                            .text(data[i].name)); 
+                },
+                error: function(){},
+            });
+        }
     });  
 
     $('#zvanje').on('change', function() {
