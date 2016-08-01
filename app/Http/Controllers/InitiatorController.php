@@ -148,7 +148,8 @@ class InitiatorController extends Controller
 	public function getCreateVoting()
 	{
 		$katedre = Department::all();
-		return view('initiator.createvoting', compact('katedre'));
+		$zvanja = Title::all();
+		return view('initiator.createvoting', compact('katedre', 'zvanja'));
 	}
 
 	public function createVoting(Request $request)
@@ -363,6 +364,34 @@ class InitiatorController extends Controller
 	{
 		$korisnici = User::where('department_id', '=', $request['katedra'])
 						->where('title_id', '=', $request['zvanje'])
+						->whereRaw('active = 1 and confirmed = 1')
+						->get();
+
+		return $korisnici;
+	}
+
+	public function getKorisniciPoZK(Request $request)
+	{
+		$korisnici = User::where('department_id', '=', $request['katedra'])
+						->where('title_id', '=', $request['zvanje'])
+						->whereRaw('active = 1 and confirmed = 1')
+						->get();
+
+		return $korisnici;
+	}
+
+	public function getKorisniciPoZ(Request $request)
+	{
+		$korisnici = User::where('title_id', '=', $request['zvanje'])
+						->whereRaw('active = 1 and confirmed = 1')
+						->get();
+
+		return $korisnici;
+	}
+
+	public function getKorisniciPoK(Request $request)
+	{
+		$korisnici = User::where('department_id', '=', $request['katedra'])
 						->whereRaw('active = 1 and confirmed = 1')
 						->get();
 

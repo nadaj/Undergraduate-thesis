@@ -221,8 +221,11 @@
             </select>
         </div>
         <div class="form-group col-md-3 col-sm-3" style="margin-top:0px">
-            <select name="zvanje" id="zvanje" class="form-control" disabled>
+            <select name="zvanje" id="zvanje" class="form-control">
                 <option value="0">Odaberite zvanje:</option>
+                @foreach ($zvanja as $zvanje)
+                <option value="{{ $zvanje->id }}">{{ $zvanje->name}}</option>
+                @endforeach
             </select>
         </div>
         <div class="form-group col-md-3 col-sm-3" style="margin-top:0px">

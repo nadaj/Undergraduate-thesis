@@ -284,3 +284,24 @@ Route::get('/initiator/getkorisnici', [
     'roles' => '2',
     'as' => 'initiator.getkorisnici'
 ]);
+
+Route::get('/initiator/getkorisnicizk', [
+    'uses' => 'InitiatorController@getKorisniciPoZK',
+    'middleware' => 'roles',
+    'roles' => '2',
+    'as' => 'initiator.getkorisnicizk'
+]);
+
+Route::get('/initiator/getkorisniciz', [
+    'uses' => 'InitiatorController@getKorisniciPoZ',
+    'middleware' => 'roles',
+    'roles' => '2',
+    'as' => 'initiator.getkorisniciz'
+]);
+
+Route::get('/initiator/getkorisnicik', [
+    'uses' => 'InitiatorController@getKorisniciPoK',
+    'middleware' => 'roles',
+    'roles' => '2',
+    'as' => 'initiator.getkorisnicik'
+]);

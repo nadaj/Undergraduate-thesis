@@ -162,21 +162,29 @@ $(document).ready(function() {
 
     $('#add_user').on('click', function(e){  
         var obj = $('#korisnik');
+        var katedra = $('#katedra').val();
+        var zvanje = $('#zvanje').val();
         var glasaci = document.getElementById("tablevoters");
         var userExists = false;
 
         // provera da li takav odgovor vec postoji i da li je unet prazan odgovor
         if (obj.val() != 0)
         {
-            for (var i = 0, row; row = glasaci.rows[i]; i++) {
+            for (var i = 0, row; row = glasaci.rows[i]; i++)
+            {
                 if (row.cells[0].innerHTML == $('#korisnik :selected').text())
+                {
                     userExists = true;
+                    break;
+                }
             }
 
             if (userExists == false)
             {
                 if ($('#tablevoters tr').length == 1)
+                {
                     glasaci.style.display = "table";
+                }
                 $('#tablevoters > tbody:last-child').append('<tr><td style="line-height:1.6">' + $('#korisnik :selected').text() + '</td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_glasaca" name="ukloni_glasaca"><i class="material-icons">delete</i></button></center></td></tr>');
                 var opt = document.createElement('option');
                 opt.value = $('#korisnik :selected').text();
@@ -185,9 +193,125 @@ $(document).ready(function() {
                 document.getElementById("glasaci").appendChild(opt);
             }
         }
+        else if (katedra != 0)
+        {
+            if (zvanje != 0)
+            {
+                $.ajax({
+                    url: base_url + 'initiator/getkorisnicizk',
+                    method: 'get',             
+                    data: {zvanje: zvanje, katedra: katedra},
+                    success: function(data)
+                    {
+                        for (var i = 0; i < data.length; i++)
+                        {
+                            for (var j = 0, row; row = glasaci.rows[j]; j++)
+                            {
+                                if (row.cells[0].innerHTML == data[j].email)
+                                {
+                                    userExists = true;
+                                    break;
+                                }
+                            }
+                            if (userExists == false)
+                            {
+                                if ($('#tablevoters tr').length == 1)
+                                {
+                                    glasaci.style.display = "table";
+                                }
+                                $('#tablevoters > tbody:last-child').append('<tr><td style="line-height:1.6">' + data[i].email + '</td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_glasaca" name="ukloni_glasaca"><i class="material-icons">delete</i></button></center></td></tr>');
+                                var opt = document.createElement('option');
+                                opt.value = data[i].email;
+                                opt.innerHTML = data[i].email;
+                                opt.selected = true;
+                                document.getElementById("glasaci").appendChild(opt);
+                            }
+                            userExists = false;
+                        }
+                        
+                    },
+                    error: function(){},
+                });
+            }
+            else
+            {
+                $.ajax({
+                    url: base_url + 'initiator/getkorisnicik',
+                    method: 'get',             
+                    data: {katedra: katedra},
+                    success: function(data)
+                    {
+                        for (var i = 0; i < data.length; i++)
+                        {   
+                            for (var j = 0, row; row = glasaci.rows[j]; j++)
+                            {
+                                if (row.cells[0].innerHTML == data[j].email)
+                                {
+                                    userExists = true;
+                                    break;
+                                }
+                            }
+                            if (userExists == false)
+                            {
+                                if ($('#tablevoters tr').length == 1)
+                                {
+                                    glasaci.style.display = "table";
+                                }
+                                $('#tablevoters > tbody:last-child').append('<tr><td style="line-height:1.6">' + data[i].email + '</td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_glasaca" name="ukloni_glasaca"><i class="material-icons">delete</i></button></center></td></tr>');
+                                var opt = document.createElement('option');
+                                opt.value = data[i].email;
+                                opt.innerHTML = data[i].email;
+                                opt.selected = true;
+                                document.getElementById("glasaci").appendChild(opt);
+                            }
+                            userExists = false;
+                        }
+                        
+                    },
+                    error: function(){},
+                });
+            }
+        }
+        else if (zvanje != 0)
+        {
+            $.ajax({
+                url: base_url + 'initiator/getkorisniciz',
+                method: 'get',             
+                data: {zvanje: zvanje},
+                success: function(data)
+                {
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        for (var j = 0, row; row = glasaci.rows[j]; j++)
+                        {
+                            if (row.cells[0].innerHTML == data[j].email)
+                            {
+                                userExists = true;
+                                break;
+                            }
+                        }
+                        if (userExists == false)
+                        {
+                            if ($('#tablevoters tr').length == 1)
+                            {
+                                glasaci.style.display = "table";
+                            }
+                            $('#tablevoters > tbody:last-child').append('<tr><td style="line-height:1.6">' + data[i].email + '</td><td style="padding-bottom:0px;padding-top:0px"><center><button style="margin-top:2px;margin-bottom:0px" class="btn btn-raised btn-danger btn-xs" id="ukloni_glasaca" name="ukloni_glasaca"><i class="material-icons">delete</i></button></center></td></tr>');
+                            var opt = document.createElement('option');
+                            opt.value = data[i].email;
+                            opt.innerHTML = data[i].email;
+                            opt.selected = true;
+                            document.getElementById("glasaci").appendChild(opt);
+                        }
+                        userExists = false;
+                    }
+                    
+                },
+                error: function(){},
+            });
+        }
 
         $("#katedra").val("0");
-        $("#zvanje").attr( "disabled", "disabled" );
         $("#zvanje").val("0");
         $("#korisnik").attr( "disabled", "disabled" );
         $("#korisnik").val("0");
