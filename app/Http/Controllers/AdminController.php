@@ -8,6 +8,9 @@ use Hash;
 use SendGrid;
 use Illuminate\Support\Str;
 use App\Voting;
+use App\Answer;
+use App\Ticket;
+use DB;
 use Carbon\Carbon;
 use Moment\Moment;
 
@@ -19,6 +22,7 @@ class AdminController extends Controller
 		$current_votings = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)->simplePaginate(5, ['*'], 'page_current');		
 		$past_votings = Voting::where('to', '<', $date_now)->simplePaginate(5, ['*'], 'page_past');			
+		$temp_past = Voting::where('to', '<', $date_now)->get();
 		$temp_current = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)->get();
 
@@ -39,7 +43,37 @@ class AdminController extends Controller
 			$progresses[$i] = ($duration_now_days / $duration_days) * 100;
 		}
 
-		return view('admin.home', compact('current_votings', 'past_votings', 'progresses'));
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
+			$past_answers[$i] = '';
+			$num_voters = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
+			foreach ($answers as $answer) 
+			{
+				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
+
+				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_past[$i]->id)
+						->where('answers_tickets.answers_id', '=', $answer->id)
+						->distinct()
+						->count();
+				$percentage_ans = ($num_voted / $num_voters) * 100;
+				$past_answers[$i] = $past_answers[$i] . $num_voted . " (" . $percentage_ans . "%)"
+				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+			}
+			$past_answers[$i] = nl2br($past_answers[$i]);
+		}
+
+		$past_successes = array();
+		for ($i = 0; $i < count($temp_past); $i++)
+		{
+			$temp = DB::table('voting_success')->where('voting_id', '=', $temp_past[$i]->id)
+															->get();
+			$past_successes[$i] = $temp[0];
+		}
+
+		return view('admin.home', compact('current_votings', 'past_votings', 'progresses',
+									'past_answers', 'past_successes'));
 	}
 
 	public function getChangePassword()

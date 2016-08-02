@@ -56,8 +56,15 @@
                     <p><b>Opis: </b>{{ $voting->description }}</p>
                     <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                     <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
-                    <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
-                </div>
+                    <p><b>Kriterijum uspešnosti glasanja:</b>
+                    @if ($past_successes[$j]->answer_id)
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer_id }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @else
+                        Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @endif
+                  </p>
+                  <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
+                  <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p></div>
             </div>
         </div>
         @else
@@ -68,8 +75,15 @@
                     <p><b>Opis: </b>{{ $voting->description }}</p>
                     <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                     <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
-                    <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
-                </div>
+                    <p><b>Kriterijum uspešnosti glasanja:</b>
+                    @if ($past_successes[$j]->answer_id)
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer_id }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @else
+                        Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                    @endif
+                  </p>
+                  <p><b>Uspešno: </b><?php if ($voting->status == 1) echo "Da"; else echo "Ne"; ?></p>
+                  <p><b>Odgovori: </b><?php echo $past_answers[$j] ?></p></div>
             </div>
         </div>
         @endif
