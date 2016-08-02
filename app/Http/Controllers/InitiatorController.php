@@ -153,15 +153,33 @@ class InitiatorController extends Controller
 						->get()
 						->count();
 
-			$proc[$i] = ($num_voted * 100)/$num_to_vote;
+			$proc[$i] = ($num_voted * 100) / $num_to_vote;
+
+			$a = Answer::where('votings_id', '=', $temp_current[$i]->id)->get();
+			$answers[$i] = '';
+			$num_voters = Ticket::where('votings_id', '=', $temp_current[$i]->id)->count();
+			foreach ($a as $answer) 
+			{
+				$answers[$i] = $answers[$i] . $answer->answer . ": ";
+
+				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
+						->where('tickets.votings_id', '=', $temp_current[$i]->id)
+						->where('answers_tickets.answers_id', '=', $answer->id)
+						->distinct()
+						->count();
+				$percentage_ans = ($num_voted / $num_voters) * 100;
+				$answers[$i] = $answers[$i] . $num_voted . " (" . $percentage_ans . "%)"
+				. "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";							
+			}
+			$answers[$i] = nl2br($answers[$i]);
 		}
 
 		for ($i = 0; $i < count($temp_past); $i++)
 		{
-			$answers = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
+			$a = Answer::where('votings_id', '=', $temp_past[$i]->id)->get();
 			$past_answers[$i] = '';
 			$num_voters = Ticket::where('votings_id', '=', $temp_past[$i]->id)->count();
-			foreach ($answers as $answer) {
+			foreach ($a as $answer) {
 				$past_answers[$i] = $past_answers[$i] . $answer->answer . ": ";
 
 				$num_voted = Ticket::join('answers_tickets', 'tickets.id', '=', 'answers_tickets.tickets_id')
@@ -185,7 +203,7 @@ class InitiatorController extends Controller
 		}
 
 		return view('initiator.votings', compact('my_votings', 'progresses', 'my_votings_past'
-			, 'proc', 'past_answers', 'past_successes'));
+			, 'proc', 'past_answers', 'past_successes', 'answers'));
 	}
 
 	public function getCreateVoting()

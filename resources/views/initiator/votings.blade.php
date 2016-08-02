@@ -23,6 +23,7 @@
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Procenat onih koji su glasali: </b>{{ $proc[$i] }}%</p>
+                  <p><b>Odgovori: </b><?php echo $answers[$i] ?></p>
                   <br/> 
               		<div class="progress progress-striped active">
                 		<div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
@@ -39,6 +40,7 @@
                   <p><b>Vreme početka:</b> <?php $m = new \Moment\Moment($voting->from); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Procenat onih koji su glasali: </b>{{ $proc[$i] }}%</p>
+                  <p><b>Odgovori: </b><?php echo $answers[$i] ?></p>
                   <br/> 
                     <div class="progress progress-striped active">
                         <div class="progress-bar" style="width: {{ $progresses[$i] }}%"></div>
