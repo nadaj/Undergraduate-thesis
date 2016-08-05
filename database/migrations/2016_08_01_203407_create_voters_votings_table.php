@@ -28,6 +28,6 @@ class CreateVotersVotingsTable extends Migration
      */
     public function down()
     {
-        chema::drop('voters_votings');
+        Schema::drop('voters_votings');
     }
 }
