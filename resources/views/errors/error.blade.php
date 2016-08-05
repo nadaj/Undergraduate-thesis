@@ -42,7 +42,7 @@
             <div class="content">
                 @if(Session::has('fail'))
                     <p class="text-danger">
-                        <b>{{ Session::get('fail') }}</b>
+                        <h1>{{ Session::get('fail') }}</h1>
                     </p>
                 @endif
             </div>
