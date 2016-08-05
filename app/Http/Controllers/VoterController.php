@@ -25,8 +25,10 @@ class VoterController extends Controller
 		$temp_current = Voting::where('from', '<=', $datenow)
 						->where('to', '>=', $datenow)->get();
 		$votings_past = Voting::where('to', '<', $datenow)
+							->where('show_voters', '=', true)
 							->simplePaginate(5, ['*'], 'page_past');
 		$temp_past = Voting::where('to', '<', $datenow)
+							->where('show_voters', '=', true)
 							->get();
 
 		$datenow = str_replace(' ', 'T', $datenow);

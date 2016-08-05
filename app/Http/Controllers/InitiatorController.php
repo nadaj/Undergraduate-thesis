@@ -30,8 +30,18 @@ class InitiatorController extends Controller
 		$temp_current = Voting::where('from', '<=', $date_now)
 						->where('to', '>=', $date_now)->get();
 		$votings_past = Voting::where('to', '<', $date_now)
+							->where(function($query)
+				            {
+				                $query->where('show_voters', '=', true)
+				                      ->orWhere('initiator_id', '=', Auth::user()->id);
+				            })
 							->simplePaginate(5, ['*'], 'page_past');
 		$temp_past = Voting::where('to', '<', $date_now)
+							->where(function($query)
+				            {
+				                $query->where('show_voters', '=', true)
+				                      ->orWhere('initiator_id', '=', Auth::user()->id);
+				            })
 							->get();	
 
 		$date_now = str_replace(' ', 'T', $date_now);
