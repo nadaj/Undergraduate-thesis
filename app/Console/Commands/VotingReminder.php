@@ -47,18 +47,19 @@ class VotingReminder extends Command
 
         foreach ($votings as $voting) 
         {
-            $voters = DB::table('voters_votings')->where('votings_id', '=', $voting->id)->get();
+            $voters_votings = DB::table('voters_votings')->where('votings_id', '=', $voting->id)->get();
 
-            foreach ($voters as $glasac) {
+            foreach ($voters_votings as $v) {
+                $glasac = DB::table('users')->where('id', '=', $v->users_id)->get();
                 $sendgrid = new SendGrid('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');
                 $email = new SendGrid\Email();
            
                 $m = "<p>Glasanje - " . $voting->name . " se završava " 
-                . date('d-m-Y H:i:s', $voting->to) 
+                . date('d-m-Y H:i:s', strtotime($voting->to))
                 . ".</p>";
-           
+                
                 $email
-                    ->addTo($glasac)
+                    ->addTo($glasac[0]->email)
                     ->setFrom('votingsystemetf@gmail.com')
                     ->setSubject('e-Glasanje: Podsetnik za ' . $voting->name)
                     ->setHtml($m)
