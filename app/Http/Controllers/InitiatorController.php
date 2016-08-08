@@ -376,10 +376,13 @@ class InitiatorController extends Controller
 
 				$g = DB::table('users')->where('email', '=', $glasac)->get();
 
-				DB::table('voters_votings')->insert([
-					'votings_id' => $last_votings_id,
-	        		'users_id' => $g[0]->id
-				]);
+				if ($request['vreme3'] !== "")
+				{
+					DB::table('voters_votings')->insert([
+						'votings_id' => $last_votings_id,
+		        		'users_id' => $g[0]->id
+					]);
+				}
 
 				$sendgrid = new SendGrid('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');
 	        	$email = new SendGrid\Email();
@@ -602,11 +605,14 @@ class InitiatorController extends Controller
 
 				$g = DB::table('users')->where('email', '=', $glasac)->get();
 
-				DB::table('voters_votings')->insert([
-					'votings_id' => $last_votings_id,
-	        		'users_id' => $g[0]->id
-				]);
-
+				if ($request->session()->get('vreme3') !== "")
+				{
+					DB::table('voters_votings')->insert([
+						'votings_id' => $last_votings_id,
+		        		'users_id' => $g[0]->id
+					]);
+				}
+				
 				$sendgrid = new SendGrid('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');
 	        	$email = new SendGrid\Email();
 	       
