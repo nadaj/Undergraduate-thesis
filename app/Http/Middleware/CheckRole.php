@@ -26,6 +26,7 @@ class CheckRole
         if ($request->user()->hasRole($roles) || !$roles) {
             return $next($request);
         }
-        return response("Insufficient permissions", 401);
+
+        return redirect('error')->with('fail', 'Nije validan zahtev!');
     }
 }
