@@ -113,7 +113,9 @@ class AdminController extends Controller
 		$users = User::where('confirmed', '=', true)
 					->where('id', '!=', Auth::user()->id)
 					->get();
-		$nousers = User::where('confirmed', '=', false)->get();
+		$nousers = User::where('confirmed', '=', false)
+						->where('confirmation_code', '=', null)
+						->get();
 
 		return view('admin.users', compact('users', 'nousers'));
 	}

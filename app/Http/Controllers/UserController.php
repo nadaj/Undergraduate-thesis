@@ -34,7 +34,7 @@ class UserController extends Controller {
 			'password' => 'required'
 		]);
 
-		if (!Auth::attempt(['email' => $request['email'], 'password' => $request['password'], 'active' => 1]))
+		if (!Auth::attempt(['email' => $request['email'], 'password' => $request['password'], 'active' => 1, 'confirmed' => 1]))
 		{
 			return redirect()->back()->with(['fail' => 'Uneti podaci nisu validni!']);
 		}
