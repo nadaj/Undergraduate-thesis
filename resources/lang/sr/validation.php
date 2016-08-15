@@ -99,7 +99,7 @@ return [
         ],
         'password' => [
             'required' => 'Niste uneli lozinku!',
-            'min' => 'Lozinka mora da sadrži najmanje 8 karatera!',
+            'min' => 'Lozinka mora da sadrži najmanje 6 karatera!',
             'max' => 'Lozinka mora da sadrži najviše 255 karaktera!',
             'confirmed' => 'Ne poklapaju se lozinka i potvrda lozinke!',
         ],
