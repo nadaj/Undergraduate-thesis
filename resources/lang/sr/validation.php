@@ -102,6 +102,7 @@ return [
             'min' => 'Lozinka mora da sadrži najmanje 6 karatera!',
             'max' => 'Lozinka mora da sadrži najviše 255 karaktera!',
             'confirmed' => 'Ne poklapaju se lozinka i potvrda lozinke!',
+            'different' => 'Moraju da se razlikuju stara i nova lozinka!',
         ],
         'fname' => [
             'required' => 'Niste uneli ime!',

@@ -86,7 +86,7 @@ class AdminController extends Controller
 	{
 		$this->validate($request, [
 			'old_password' => 'required',
-            'password' => 'required|confirmed|min:6'
+            'password' => 'required|confirmed|min:6|different:old_password'
         ]);
 
 		$user = Auth::user();
