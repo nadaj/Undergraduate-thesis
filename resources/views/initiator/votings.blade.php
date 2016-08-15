@@ -67,7 +67,7 @@
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p>
                   <p><b>Kriterijum uspešnosti glasanja:</b>
                     @if ($past_successes[$j]->answer_id)
-                        Broj glasova za odgovor <i>{{ $past_successes[$j]->->answer->answer }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer->answer }}</i> {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
                     @else
                         Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
                     @endif
@@ -88,7 +88,7 @@
                   <p><b>Vreme završetka:</b> <?php $m = new \Moment\Moment($voting->to); echo $m->format('d-m-Y H:i:s'); ?></p> 
                   <p><b>Kriterijum uspešnosti glasanja:</b>
                     @if ($past_successes[$j]->answer_id)
-                        Broj glasova za odgovor <i>{{ $past_successes[$j]->->answer->answer }}</i> {{ $$past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
+                        Broj glasova za odgovor <i>{{ $past_successes[$j]->answer->answer }}</i> {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
                     @else
                         Broj glasača {{ $past_successes[$j]->relation }} {{ $past_successes[$j]->value }}
                     @endif
