@@ -256,7 +256,7 @@ $(document).ready(function() {
                         {
                             for (var j = 0, row; row = glasaci.rows[j]; j++)
                             {
-                                if (row.cells[0].innerHTML == data[j].email)
+                                if (row.cells[0].innerHTML == data[i].email)
                                 {
                                     userExists = true;
                                     break;
@@ -294,7 +294,7 @@ $(document).ready(function() {
                         {   
                             for (var j = 0, row; row = glasaci.rows[j]; j++)
                             {
-                                if (row.cells[0].innerHTML == data[j].email)
+                                if (row.cells[0].innerHTML == data[i].email)
                                 {
                                     userExists = true;
                                     break;
@@ -333,7 +333,7 @@ $(document).ready(function() {
                     {
                         for (var j = 0, row; row = glasaci.rows[j]; j++)
                         {
-                            if (row.cells[0].innerHTML == data[j].email)
+                            if (row.cells[0].innerHTML == data[i].email)
                             {
                                 userExists = true;
                                 break;
