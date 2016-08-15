@@ -22,6 +22,6 @@ class VotingSuccess extends Model
 
     public function answer()
     {
-        return $this->belongsTo('App\Answer', 'foreign_key', 'answer_id');
+        return $this->belongsTo('App\Answer');
     }
 }

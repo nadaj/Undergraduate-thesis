@@ -13,6 +13,7 @@ use App\Ticket;
 use DB;
 use Carbon\Carbon;
 use Moment\Moment;
+use App\VotingSuccess;
 
 class AdminController extends Controller
 {
@@ -67,7 +68,7 @@ class AdminController extends Controller
 		$past_successes = array();
 		for ($i = 0; $i < count($temp_past); $i++)
 		{
-			$temp = DB::table('voting_success')->where('voting_id', '=', $temp_past[$i]->id)
+			$temp = VotingSuccess::where('voting_id', '=', $temp_past[$i]->id)
 															->get();
 			$past_successes[$i] = $temp[0];
 		}
