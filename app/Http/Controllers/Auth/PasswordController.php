@@ -53,7 +53,10 @@ class PasswordController extends Controller
         $this->validate($request, ['email' => 'required|email']);
 
         // provera da li postoji korisnik sa unetim emailom
-        $user = User::where('email', '=', $request['email'])->get();
+        $user = User::where('email', '=', $request['email'])
+                    ->where('active', '=', 1)
+                    ->where('confirmed', '=', 1)
+                    ->get();
 
         if ($user->isEmpty())
             return redirect()->back()->with([
