@@ -16,7 +16,7 @@ class CreateTicketsTable extends Migration
             $table->increments('id');
             $table->integer('votings_id')->unsigned();
             $table->foreign('votings_id')->references('id')->on('votings');
-            $table->string('nonce', 50);
+            $table->string('nonce', 16);
         });
     }
 
