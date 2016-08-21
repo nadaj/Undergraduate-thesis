@@ -150,14 +150,14 @@ class VoterController extends Controller
 			{	
 				$ticket = base64_decode($request['ticket']);
 
-				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 				$iv_dec = substr($ticket, 0, $iv_size);
 				$ticket = substr($ticket, $iv_size);
 
 				$hexstr = unpack('H*', Auth::user()->password);
 				$key = substr(array_shift($hexstr), 0, 32);
 				
-				$ticket = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $ticket, MCRYPT_MODE_CBC, $iv_dec);
+				$ticket = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $ticket, MCRYPT_MODE_CBC, $iv_dec);
 				
 				$t = Ticket::where('votings_id', '=', $request['voting_id'])
 								->where('nonce', '=', $ticket)

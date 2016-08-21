@@ -356,16 +356,16 @@ class InitiatorController extends Controller
 			foreach ($request['glasaci'] as $glasac)
 			{
 				// creating ticket encrypted with voter's hashed password
-				$nonce = Str::random(32);
+				$nonce = Str::random(16);
 				$password = User::where('email', '=', $glasac)->get()->first()->password;
 				$hexstr = unpack('H*', $password);
 				$key = substr(array_shift($hexstr), 0, 32);
 				
 				// create a random IV to use with CBC encoding
-				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 				$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
-				$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $nonce, MCRYPT_MODE_CBC, $iv);
+				$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $nonce, MCRYPT_MODE_CBC, $iv);
 
 				$hashed_nonce = $iv . $hashed_nonce;
 				$hashed_nonce = base64_encode($hashed_nonce);
@@ -585,16 +585,16 @@ class InitiatorController extends Controller
 			foreach ($request->session()->get('glasaci') as $glasac)
 			{
 				// creating ticket encrypted with voter's hashed password
-				$nonce = Str::random(32);
+				$nonce = Str::random(16);
 				$password = User::where('email', '=', $glasac)->get()->first()->password;
 				$hexstr = unpack('H*', $password);
 				$key = substr(array_shift($hexstr), 0, 32);
 				
 				// create a random IV to use with CBC encoding
-				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 				$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 
-				$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $nonce, MCRYPT_MODE_CBC, $iv);
+				$hashed_nonce = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key, $nonce, MCRYPT_MODE_CBC, $iv);
 
 				$hashed_nonce = $iv . $hashed_nonce;
 				$hashed_nonce = base64_encode($hashed_nonce);
@@ -752,14 +752,14 @@ class InitiatorController extends Controller
 			{	
 				$ticket = base64_decode($request['ticket']);
 
-				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 				$iv_dec = substr($ticket, 0, $iv_size);
 				$ticket = substr($ticket, $iv_size);
 
 				$hexstr = unpack('H*', Auth::user()->password);
 				$key = substr(array_shift($hexstr), 0, 32);
 				
-				$ticket = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $ticket, MCRYPT_MODE_CBC, $iv_dec);
+				$ticket = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $ticket, MCRYPT_MODE_CBC, $iv_dec);
 				
 				$t = Ticket::where('votings_id', '=', $request['voting_id'])
 								->where('nonce', '=', $ticket)
